@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Footwear Sample Tracker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>👟 Sample Tracker</h1>
+                </div>
+                <nav class="nav">
+                    <button class="nav-btn active" data-view="dashboard">Dashboard</button>
+                    <button class="nav-btn" data-view="add-sample">Add Sample</button>
+                    <button class="nav-btn" data-view="list">All Samples</button>
+                    <button class="nav-btn" data-view="kanban">Kanban</button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Dashboard View -->
+            <div id="dashboard-view" class="view active">
+                <div class="view-header">
+                    <h2>Sample Dashboard</h2>
+                    <div class="dashboard-filters">
+                        <select id="dashboard-client-filter" class="form-control filter-select">
+                            <option value="">All Clients</option>
+                        </select>
+                        <button class="btn btn--outline" onclick="exportFilteredSamples('dashboard')">Export Filtered</button>
+                    </div>
+                </div>
+                
+                <div class="stats-summary">
+                    <div class="stat-item">
+                        <span class="stat-number" id="total-samples">0</span>
+                        <span class="stat-label">Total Samples</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="ready-samples">0</span>
+                        <span class="stat-label">Ready to Ship</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="in-progress-samples">0</span>
+                        <span class="stat-label">In Progress</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="material-completion">0%</span>
+                        <span class="stat-label">Material Completion</span>
+                    </div>
+                </div>
+                
+                <div class="dashboard-grid">
+                    <div class="stage-section">
+                        <h3>Material Stage</h3>
+                        <div id="material-stage-samples" class="sample-cards"></div>
+                    </div>
+                    <div class="stage-section">
+                        <h3>Development Stage</h3>
+                        <div id="development-stage-samples" class="sample-cards"></div>
+                    </div>
+                    <div class="stage-section">
+                        <h3>Final Stage</h3>
+                        <div id="final-stage-samples" class="sample-cards"></div>
+                    </div>
+                    <div class="stage-section">
+                        <h3>Ready to Ship</h3>
+                        <div id="ready-stage-samples" class="sample-cards"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Sample View -->
+            <div id="add-sample-view" class="view">
+                <div class="view-header">
+                    <h2>Add New Sample</h2>
+                </div>
+                
+                <form id="add-sample-form" class="add-sample-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="sample-name">Sample Name *</label>
+                            <input type="text" id="sample-name" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="client-name">Client Name *</label>
+                            <input type="text" id="client-name" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="date-received">Date Received *</label>
+                            <input type="date" id="date-received" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="initial-stage">Initial Stage *</label>
+                            <select id="initial-stage" class="form-control" required>
+                                <option value="Material">Material Stage</option>
+                                <option value="Development">Development Stage</option>
+                                <option value="Final">Final Stage</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="created-by">Created By *</label>
+                            <input type="text" id="created-by" class="form-control" placeholder="Your name" required>
+                        </div>
+                    </div>
+                    
+                    <!-- Enhanced Material Details Section -->
+                    <div class="material-details-section">
+                        <h3>Material Details</h3>
+                        <div class="material-subsections">
+                            <div class="material-subsection">
+                                <h4>Upper Material</h4>
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label class="form-label" for="upper-vendor">Vendor</label>
+                                        <input type="text" id="upper-vendor" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="upper-stage">Stage</label>
+                                        <select id="upper-stage" class="form-control">
+                                            <option value="Not Started">Not Started</option>
+                                            <option value="Sourcing">Sourcing</option>
+                                            <option value="Ordered">Ordered</option>
+                                            <option value="Delivered">Delivered</option>
+                                            <option value="Quality Check">Quality Check</option>
+                                            <option value="Approved">Approved</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="upper-delivery-date">Delivery Date</label>
+                                        <input type="date" id="upper-delivery-date" class="form-control">
+                                    </div>
+                                    <div class="form-group form-group--full">
+                                        <label class="form-label" for="upper-notes">Notes</label>
+                                        <input type="text" id="upper-notes" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="material-subsection">
+                                <h4>Last</h4>
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label class="form-label" for="last-vendor">Vendor</label>
+                                        <input type="text" id="last-vendor" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="last-stage">Stage</label>
+                                        <select id="last-stage" class="form-control">
+                                            <option value="Not Started">Not Started</option>
+                                            <option value="Sourcing">Sourcing</option>
+                                            <option value="Ordered">Ordered</option>
+                                            <option value="Delivered">Delivered</option>
+                                            <option value="Quality Check">Quality Check</option>
+                                            <option value="Approved">Approved</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="last-delivery-date">Delivery Date</label>
+                                        <input type="date" id="last-delivery-date" class="form-control">
+                                    </div>
+                                    <div class="form-group form-group--full">
+                                        <label class="form-label" for="last-notes">Notes</label>
+                                        <input type="text" id="last-notes" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="material-subsection">
+                                <h4>Sole</h4>
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label class="form-label" for="sole-vendor">Vendor</label>
+                                        <input type="text" id="sole-vendor" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="sole-stage">Stage</label>
+                                        <select id="sole-stage" class="form-control">
+                                            <option value="Not Started">Not Started</option>
+                                            <option value="Sourcing">Sourcing</option>
+                                            <option value="Ordered">Ordered</option>
+                                            <option value="Delivered">Delivered</option>
+                                            <option value="Quality Check">Quality Check</option>
+                                            <option value="Approved">Approved</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="sole-delivery-date">Delivery Date</label>
+                                        <input type="date" id="sole-delivery-date" class="form-control">
+                                    </div>
+                                    <div class="form-group form-group--full">
+                                        <label class="form-label" for="sole-notes">Notes</label>
+                                        <input type="text" id="sole-notes" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="material-subsection">
+                                <h4>Other Material 1</h4>
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label class="form-label" for="other1-name">Material Name</label>
+                                        <input type="text" id="other1-name" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="other1-vendor">Vendor</label>
+                                        <input type="text" id="other1-vendor" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="other1-stage">Stage</label>
+                                        <select id="other1-stage" class="form-control">
+                                            <option value="Not Started">Not Started</option>
+                                            <option value="Sourcing">Sourcing</option>
+                                            <option value="Ordered">Ordered</option>
+                                            <option value="Delivered">Delivered</option>
+                                            <option value="Quality Check">Quality Check</option>
+                                            <option value="Approved">Approved</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="other1-delivery-date">Delivery Date</label>
+                                        <input type="date" id="other1-delivery-date" class="form-control">
+                                    </div>
+                                    <div class="form-group form-group--full">
+                                        <label class="form-label" for="other1-notes">Notes</label>
+                                        <input type="text" id="other1-notes" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="material-subsection">
+                                <h4>Other Material 2</h4>
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label class="form-label" for="other2-name">Material Name</label>
+                                        <input type="text" id="other2-name" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="other2-vendor">Vendor</label>
+                                        <input type="text" id="other2-vendor" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="other2-stage">Stage</label>
+                                        <select id="other2-stage" class="form-control">
+                                            <option value="Not Started">Not Started</option>
+                                            <option value="Sourcing">Sourcing</option>
+                                            <option value="Ordered">Ordered</option>
+                                            <option value="Delivered">Delivered</option>
+                                            <option value="Quality Check">Quality Check</option>
+                                            <option value="Approved">Approved</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="other2-delivery-date">Delivery Date</label>
+                                        <input type="date" id="other2-delivery-date" class="form-control">
+                                    </div>
+                                    <div class="form-group form-group--full">
+                                        <label class="form-label" for="other2-notes">Notes</label>
+                                        <input type="text" id="other2-notes" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Development Stages Section -->
+                    <div class="development-stages-section">
+                        <h3>Development Stages</h3>
+                        <div class="development-subsections">
+                            <div class="development-subsection">
+                                <h4>Pattern Trial</h4>
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label class="form-label" for="pattern-delivery-date">Delivery Date</label>
+                                        <input type="date" id="pattern-delivery-date" class="form-control">
+                                    </div>
+                                    <div class="form-group form-group--full">
+                                        <label class="form-label" for="pattern-notes">Notes</label>
+                                        <input type="text" id="pattern-notes" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="development-subsection">
+                                <h4>Upper Ready</h4>
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label class="form-label" for="upper-ready-delivery-date">Delivery Date</label>
+                                        <input type="date" id="upper-ready-delivery-date" class="form-control">
+                                    </div>
+                                    <div class="form-group form-group--full">
+                                        <label class="form-label" for="upper-ready-notes">Notes</label>
+                                        <input type="text" id="upper-ready-notes" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="development-subsection">
+                                <h4>Sole Ready</h4>
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label class="form-label" for="sole-ready-delivery-date">Delivery Date</label>
+                                        <input type="date" id="sole-ready-delivery-date" class="form-control">
+                                    </div>
+                                    <div class="form-group form-group--full">
+                                        <label class="form-label" for="sole-ready-notes">Notes</label>
+                                        <input type="text" id="sole-ready-notes" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="development-subsection">
+                                <h4>Assembly</h4>
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label class="form-label" for="assembly-delivery-date">Delivery Date</label>
+                                        <input type="date" id="assembly-delivery-date" class="form-control">
+                                    </div>
+                                    <div class="form-group form-group--full">
+                                        <label class="form-label" for="assembly-notes">Notes</label>
+                                        <input type="text" id="assembly-notes" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="development-subsection">
+                                <h4>Quality Check</h4>
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label class="form-label" for="quality-delivery-date">Delivery Date</label>
+                                        <input type="date" id="quality-delivery-date" class="form-control">
+                                    </div>
+                                    <div class="form-group form-group--full">
+                                        <label class="form-label" for="quality-notes">Notes</label>
+                                        <input type="text" id="quality-notes" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="sample-photos">Photos</label>
+                        <div class="photo-upload-container">
+                            <input type="file" id="sample-photos" class="form-control" multiple accept="image/*">
+                            <button type="button" id="camera-button" class="btn btn--outline camera-btn" style="display: none;">
+                                📷 Take Photo
+                            </button>
+                            <input type="file" id="camera-input" accept="image/*" capture="environment" style="display: none;">
+                        </div>
+                        <div id="photo-preview" class="photo-preview-container"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="initial-notes">Initial Notes</label>
+                        <textarea id="initial-notes" class="form-control" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn--primary">Add Sample</button>
+                        <button type="button" class="btn btn--secondary" onclick="clearForm()">Clear</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- List View - Excel-like Table -->
+            <div id="list-view" class="view">
+                <div class="view-header">
+                    <h2>All Samples - Complete Overview</h2>
+                    <div class="list-controls">
+                        <input type="text" id="search-input" class="form-control search-input" placeholder="Search samples...">
+                        <select id="filter-stage" class="form-control filter-select">
+                            <option value="">All Stages</option>
+                            <option value="Material">Material Stage</option>
+                            <option value="Development">Development Stage</option>
+                            <option value="Final">Final Stage</option>
+                            <option value="Ready to Ship">Ready to Ship</option>
+                        </select>
+                        <select id="list-client-filter" class="form-control filter-select">
+                            <option value="">All Clients</option>
+                        </select>
+                        <button class="btn btn--outline" onclick="exportFilteredSamples('list')">Export Excel</button>
+                    </div>
+                </div>
+                
+                <div class="excel-table-container">
+                    <div class="table-scroll-wrapper">
+                        <table id="excel-samples-table" class="excel-table">
+                            <thead>
+                                <tr>
+                                    <th class="sticky-col">Sample ID</th>
+                                    <th class="sticky-col-2">Name</th>
+                                    <th>Client</th>
+                                    <th>Date Received</th>
+                                    <th>Current Stage</th>
+                                    <th>Status</th>
+                                    <th>Photo</th>
+                                    <th colspan="4">Material Details</th>
+                                    <th colspan="5">Development Stages</th>
+                                    <th>Last Edited By</th>
+                                    <th>Last Edited</th>
+                                    <th>Actions</th>
+                                </tr>
+                                <tr class="sub-header">
+                                    <th class="sticky-col"></th>
+                                    <th class="sticky-col-2"></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th>Upper Material</th>
+                                    <th>Last</th>
+                                    <th>Sole</th>
+                                    <th>Other Materials</th>
+                                    <th>Pattern Trial</th>
+                                    <th>Upper Ready</th>
+                                    <th>Sole Ready</th>
+                                    <th>Assembly</th>
+                                    <th>Quality Check</th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="excel-table-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kanban View -->
+            <div id="kanban-view" class="view">
+                <div class="view-header">
+                    <h2>Kanban Board</h2>
+                </div>
+                
+                <div class="kanban-board">
+                    <div class="kanban-column">
+                        <h3>Material Stage</h3>
+                        <div id="kanban-material" class="kanban-cards" data-stage="Material"></div>
+                    </div>
+                    <div class="kanban-column">
+                        <h3>Development Stage</h3>
+                        <div id="kanban-development" class="kanban-cards" data-stage="Development"></div>
+                    </div>
+                    <div class="kanban-column">
+                        <h3>Final Stage</h3>
+                        <div id="kanban-final" class="kanban-cards" data-stage="Final"></div>
+                    </div>
+                    <div class="kanban-column">
+                        <h3>Ready to Ship</h3>
+                        <div id="kanban-ready" class="kanban-cards" data-stage="Ready to Ship"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sample Detail Modal -->
+            <div id="sample-detail-modal" class="modal hidden">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 id="modal-sample-title">Sample Details</h3>
+                        <button class="modal-close" onclick="closeSampleModal()">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="sample-detail-tabs">
+                            <button class="tab-btn active" data-tab="general">General</button>
+                            <button class="tab-btn" data-tab="materials">Materials</button>
+                            <button class="tab-btn" data-tab="development">Development</button>
+                            <button class="tab-btn" data-tab="photos">Photos</button>
+                            <button class="tab-btn" data-tab="history">History</button>
+                        </div>
+                        
+                        <div class="tab-content">
+                            <!-- General Tab -->
+                            <div id="general-tab" class="tab-panel active">
+                                <div class="sample-basic-info">
+                                    <h4 id="detail-sample-name"></h4>
+                                    <div class="info-grid">
+                                        <p><strong>ID:</strong> <span id="detail-sample-id"></span></p>
+                                        <p><strong>Client:</strong> <span id="detail-client"></span></p>
+                                        <p><strong>Date Received:</strong> <span id="detail-date"></span></p>
+                                        <p><strong>Last Updated:</strong> <span id="detail-last-updated"></span></p>
+                                        <p><strong>Last Edited By:</strong> <span id="detail-last-edited-by"></span></p>
+                                        <p><strong>Current Stage:</strong> <span id="detail-current-stage"></span></p>
+                                    </div>
+                                </div>
+                                
+                                <div class="notes-section">
+                                    <h5>Notes</h5>
+                                    <textarea id="detail-notes" class="form-control" rows="4"></textarea>
+                                </div>
+                            </div>
+                            
+                            <!-- Materials Tab -->
+                            <div id="materials-tab" class="tab-panel">
+                                <div class="material-details-edit">
+                                    <div class="material-section">
+                                        <h5>Upper Material</h5>
+                                        <div class="material-inputs-detailed">
+                                            <input type="text" id="edit-upper-vendor" class="form-control" placeholder="Vendor">
+                                            <select id="edit-upper-stage" class="form-control">
+                                                <option value="Not Started">Not Started</option>
+                                                <option value="Sourcing">Sourcing</option>
+                                                <option value="Ordered">Ordered</option>
+                                                <option value="Delivered">Delivered</option>
+                                                <option value="Quality Check">Quality Check</option>
+                                                <option value="Approved">Approved</option>
+                                            </select>
+                                            <input type="date" id="edit-upper-delivery-date" class="form-control" placeholder="Delivery Date">
+                                            <input type="text" id="edit-upper-notes" class="form-control" placeholder="Notes">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="material-section">
+                                        <h5>Last</h5>
+                                        <div class="material-inputs-detailed">
+                                            <input type="text" id="edit-last-vendor" class="form-control" placeholder="Vendor">
+                                            <select id="edit-last-stage" class="form-control">
+                                                <option value="Not Started">Not Started</option>
+                                                <option value="Sourcing">Sourcing</option>
+                                                <option value="Ordered">Ordered</option>
+                                                <option value="Delivered">Delivered</option>
+                                                <option value="Quality Check">Quality Check</option>
+                                                <option value="Approved">Approved</option>
+                                            </select>
+                                            <input type="date" id="edit-last-delivery-date" class="form-control" placeholder="Delivery Date">
+                                            <input type="text" id="edit-last-notes" class="form-control" placeholder="Notes">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="material-section">
+                                        <h5>Sole</h5>
+                                        <div class="material-inputs-detailed">
+                                            <input type="text" id="edit-sole-vendor" class="form-control" placeholder="Vendor">
+                                            <select id="edit-sole-stage" class="form-control">
+                                                <option value="Not Started">Not Started</option>
+                                                <option value="Sourcing">Sourcing</option>
+                                                <option value="Ordered">Ordered</option>
+                                                <option value="Delivered">Delivered</option>
+                                                <option value="Quality Check">Quality Check</option>
+                                                <option value="Approved">Approved</option>
+                                            </select>
+                                            <input type="date" id="edit-sole-delivery-date" class="form-control" placeholder="Delivery Date">
+                                            <input type="text" id="edit-sole-notes" class="form-control" placeholder="Notes">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="material-section">
+                                        <h5>Other Material 1</h5>
+                                        <div class="material-inputs-detailed">
+                                            <input type="text" id="edit-other1-name" class="form-control" placeholder="Material Name">
+                                            <input type="text" id="edit-other1-vendor" class="form-control" placeholder="Vendor">
+                                            <select id="edit-other1-stage" class="form-control">
+                                                <option value="Not Started">Not Started</option>
+                                                <option value="Sourcing">Sourcing</option>
+                                                <option value="Ordered">Ordered</option>
+                                                <option value="Delivered">Delivered</option>
+                                                <option value="Quality Check">Quality Check</option>
+                                                <option value="Approved">Approved</option>
+                                            </select>
+                                            <input type="date" id="edit-other1-delivery-date" class="form-control" placeholder="Delivery Date">
+                                            <input type="text" id="edit-other1-notes" class="form-control" placeholder="Notes">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="material-section">
+                                        <h5>Other Material 2</h5>
+                                        <div class="material-inputs-detailed">
+                                            <input type="text" id="edit-other2-name" class="form-control" placeholder="Material Name">
+                                            <input type="text" id="edit-other2-vendor" class="form-control" placeholder="Vendor">
+                                            <select id="edit-other2-stage" class="form-control">
+                                                <option value="Not Started">Not Started</option>
+                                                <option value="Sourcing">Sourcing</option>
+                                                <option value="Ordered">Ordered</option>
+                                                <option value="Delivered">Delivered</option>
+                                                <option value="Quality Check">Quality Check</option>
+                                                <option value="Approved">Approved</option>
+                                            </select>
+                                            <input type="date" id="edit-other2-delivery-date" class="form-control" placeholder="Delivery Date">
+                                            <input type="text" id="edit-other2-notes" class="form-control" placeholder="Notes">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Development Tab -->
+                            <div id="development-tab" class="tab-panel">
+                                <div class="stages-grid">
+                                    <div class="stage-group">
+                                        <h5>Development Stages</h5>
+                                        <div class="stage-item-detailed">
+                                            <label>Pattern Trial</label>
+                                            <div class="stage-controls">
+                                                <select id="detail-pattern" class="form-control stage-select">
+                                                    <option value="Not Started">Not Started</option>
+                                                    <option value="In Progress">In Progress</option>
+                                                    <option value="Completed">Completed</option>
+                                                    <option value="Failed">Failed</option>
+                                                </select>
+                                                <input type="date" id="detail-pattern-delivery" class="form-control">
+                                                <input type="text" id="detail-pattern-notes" class="form-control" placeholder="Notes">
+                                            </div>
+                                        </div>
+                                        <div class="stage-item-detailed">
+                                            <label>Upper Ready</label>
+                                            <div class="stage-controls">
+                                                <select id="detail-upper" class="form-control stage-select">
+                                                    <option value="Not Started">Not Started</option>
+                                                    <option value="In Progress">In Progress</option>
+                                                    <option value="Completed">Completed</option>
+                                                </select>
+                                                <input type="date" id="detail-upper-delivery" class="form-control">
+                                                <input type="text" id="detail-upper-notes" class="form-control" placeholder="Notes">
+                                            </div>
+                                        </div>
+                                        <div class="stage-item-detailed">
+                                            <label>Sole Ready</label>
+                                            <div class="stage-controls">
+                                                <select id="detail-sole" class="form-control stage-select">
+                                                    <option value="Not Started">Not Started</option>
+                                                    <option value="In Progress">In Progress</option>
+                                                    <option value="Completed">Completed</option>
+                                                </select>
+                                                <input type="date" id="detail-sole-delivery" class="form-control">
+                                                <input type="text" id="detail-sole-notes" class="form-control" placeholder="Notes">
+                                            </div>
+                                        </div>
+                                        <div class="stage-item-detailed">
+                                            <label>Assembly</label>
+                                            <div class="stage-controls">
+                                                <select id="detail-assembly" class="form-control stage-select">
+                                                    <option value="Not Started">Not Started</option>
+                                                    <option value="In Progress">In Progress</option>
+                                                    <option value="Completed">Completed</option>
+                                                </select>
+                                                <input type="date" id="detail-assembly-delivery" class="form-control">
+                                                <input type="text" id="detail-assembly-notes" class="form-control" placeholder="Notes">
+                                            </div>
+                                        </div>
+                                        <div class="stage-item-detailed">
+                                            <label>Quality Check</label>
+                                            <div class="stage-controls">
+                                                <select id="detail-quality" class="form-control stage-select">
+                                                    <option value="Not Started">Not Started</option>
+                                                    <option value="In Progress">In Progress</option>
+                                                    <option value="Completed">Completed</option>
+                                                    <option value="Failed">Failed</option>
+                                                </select>
+                                                <input type="date" id="detail-quality-delivery" class="form-control">
+                                                <input type="text" id="detail-quality-notes" class="form-control" placeholder="Notes">
+                                            </div>
+                                        </div>
+                                        <div class="stage-item-detailed">
+                                            <label>Ready to Ship</label>
+                                            <div class="stage-controls">
+                                                <select id="detail-ready-ship" class="form-control stage-select">
+                                                    <option value="false">No</option>
+                                                    <option value="true">Yes</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Photos Tab -->
+                            <div id="photos-tab" class="tab-panel">
+                                <div class="photo-management">
+                                    <h5>Photo Gallery</h5>
+                                    <div class="photo-upload-controls">
+                                        <input type="file" id="modal-photo-input" class="form-control" multiple accept="image/*">
+                                        <button type="button" id="modal-camera-button" class="btn btn--outline camera-btn">
+                                            📷 Take Photo
+                                        </button>
+                                        <input type="file" id="modal-camera-input" accept="image/*" capture="environment" style="display: none;">
+                                    </div>
+                                    <div id="modal-photo-gallery" class="photo-gallery-modal"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- History Tab -->
+                            <div id="history-tab" class="tab-panel">
+                                <div class="edit-history">
+                                    <h5>Edit History</h5>
+                                    <div id="edit-history-list" class="history-list"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn--primary" onclick="saveSampleChanges()">Save Changes</button>
+                        <button class="btn btn--secondary" onclick="closeSampleModal()">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Name Modal -->
+            <div id="user-name-modal" class="modal hidden">
+                <div class="modal-content user-name-modal">
+                    <div class="modal-header">
+                        <h3>Enter Your Name</h3>
+                    </div>
+                    <div class="modal-body">
+                        <p>Please enter your name to track this edit:</p>
+                        <input type="text" id="user-name-input" class="form-control" placeholder="Your name" required>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn--primary" onclick="confirmUserName()">Confirm</button>
+                        <button class="btn btn--secondary" onclick="cancelUserName()">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Delete Confirmation Modal -->
+            <div id="delete-modal" class="modal hidden">
+                <div class="modal-content delete-modal">
+                    <div class="modal-header">
+                        <h3>Confirm Deletion</h3>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to delete this sample?</p>
+                        <p><strong id="delete-sample-name"></strong> (<span id="delete-sample-id"></span>)</p>
+                        <p class="warning-text">This action cannot be undone.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn--primary" onclick="confirmDelete()">Delete</button>
+                        <button class="btn btn--secondary" onclick="cancelDelete()">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
