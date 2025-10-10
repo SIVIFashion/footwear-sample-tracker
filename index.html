@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Footwear Sample Tracker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>👟 Sample Tracker</h1>
+                </div>
+                <nav class="nav">
+                    <button class="nav-btn active" data-view="dashboard">Dashboard</button>
+                    <button class="nav-btn" data-view="add-sample">Add Sample</button>
+                    <button class="nav-btn" data-view="list">All Samples</button>
+                    <button class="nav-btn" data-view="kanban">Kanban</button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Dashboard View -->
+            <div id="dashboard-view" class="view active">
+                <div class="view-header">
+                    <h2>Sample Dashboard</h2>
+                    <div class="stats-summary">
+                        <div class="stat-item">
+                            <span class="stat-number" id="total-samples">0</span>
+                            <span class="stat-label">Total Samples</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="ready-samples">0</span>
+                            <span class="stat-label">Ready to Ship</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="in-progress-samples">0</span>
+                            <span class="stat-label">In Progress</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-grid">
+                    <div class="stage-section">
+                        <h3>Material Stage</h3>
+                        <div id="material-stage-samples" class="sample-cards"></div>
+                    </div>
+                    <div class="stage-section">
+                        <h3>Development Stage</h3>
+                        <div id="development-stage-samples" class="sample-cards"></div>
+                    </div>
+                    <div class="stage-section">
+                        <h3>Final Stage</h3>
+                        <div id="final-stage-samples" class="sample-cards"></div>
+                    </div>
+                    <div class="stage-section">
+                        <h3>Ready to Ship</h3>
+                        <div id="ready-stage-samples" class="sample-cards"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Sample View -->
+            <div id="add-sample-view" class="view">
+                <div class="view-header">
+                    <h2>Add New Sample</h2>
+                </div>
+                
+                <form id="add-sample-form" class="add-sample-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="sample-name">Sample Name</label>
+                            <input type="text" id="sample-name" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="client-name">Client Name</label>
+                            <input type="text" id="client-name" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="date-received">Date Received</label>
+                            <input type="date" id="date-received" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="initial-stage">Initial Stage</label>
+                            <select id="initial-stage" class="form-control" required>
+                                <option value="Material">Material Stage</option>
+                                <option value="Development">Development Stage</option>
+                                <option value="Final">Final Stage</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="sample-photos">Photos</label>
+                        <input type="file" id="sample-photos" class="form-control" multiple accept="image/*">
+                        <div id="photo-preview" class="photo-preview-container"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="initial-notes">Initial Notes</label>
+                        <textarea id="initial-notes" class="form-control" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn--primary">Add Sample</button>
+                        <button type="button" class="btn btn--secondary" onclick="clearForm()">Clear</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- List View -->
+            <div id="list-view" class="view">
+                <div class="view-header">
+                    <h2>All Samples</h2>
+                    <div class="list-controls">
+                        <input type="text" id="search-input" class="form-control search-input" placeholder="Search samples...">
+                        <select id="filter-stage" class="form-control filter-select">
+                            <option value="">All Stages</option>
+                            <option value="Material">Material Stage</option>
+                            <option value="Development">Development Stage</option>
+                            <option value="Final">Final Stage</option>
+                            <option value="Ready to Ship">Ready to Ship</option>
+                        </select>
+                        <button class="btn btn--outline" onclick="exportSamples()">Export CSV</button>
+                    </div>
+                </div>
+                
+                <div class="samples-table-container">
+                    <table id="samples-table" class="samples-table">
+                        <thead>
+                            <tr>
+                                <th>Sample ID</th>
+                                <th>Name</th>
+                                <th>Client</th>
+                                <th>Date Received</th>
+                                <th>Current Stage</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="samples-table-body">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Kanban View -->
+            <div id="kanban-view" class="view">
+                <div class="view-header">
+                    <h2>Kanban Board</h2>
+                </div>
+                
+                <div class="kanban-board">
+                    <div class="kanban-column">
+                        <h3>Material Stage</h3>
+                        <div id="kanban-material" class="kanban-cards" data-stage="Material"></div>
+                    </div>
+                    <div class="kanban-column">
+                        <h3>Development Stage</h3>
+                        <div id="kanban-development" class="kanban-cards" data-stage="Development"></div>
+                    </div>
+                    <div class="kanban-column">
+                        <h3>Final Stage</h3>
+                        <div id="kanban-final" class="kanban-cards" data-stage="Final"></div>
+                    </div>
+                    <div class="kanban-column">
+                        <h3>Ready to Ship</h3>
+                        <div id="kanban-ready" class="kanban-cards" data-stage="Ready to Ship"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sample Detail Modal -->
+            <div id="sample-detail-modal" class="modal hidden">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 id="modal-sample-title">Sample Details</h3>
+                        <button class="modal-close" onclick="closeSampleModal()">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="sample-detail-content">
+                            <div class="sample-info-section">
+                                <div class="sample-basic-info">
+                                    <h4 id="detail-sample-name"></h4>
+                                    <p><strong>ID:</strong> <span id="detail-sample-id"></span></p>
+                                    <p><strong>Client:</strong> <span id="detail-client"></span></p>
+                                    <p><strong>Date Received:</strong> <span id="detail-date"></span></p>
+                                    <p><strong>Last Updated:</strong> <span id="detail-last-updated"></span></p>
+                                </div>
+                                
+                                <div class="sample-photos">
+                                    <h5>Photos</h5>
+                                    <div id="detail-photo-gallery" class="photo-gallery"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="sample-stages">
+                                <h4>Stage Progress</h4>
+                                <div class="stages-grid">
+                                    <div class="stage-group">
+                                        <h5>Material Stage</h5>
+                                        <div class="stage-item">
+                                            <label>Material Identification</label>
+                                            <select id="detail-material-id" class="form-control stage-select">
+                                                <option value="Not Started">Not Started</option>
+                                                <option value="In Progress">In Progress</option>
+                                                <option value="Completed">Completed</option>
+                                            </select>
+                                        </div>
+                                        <div class="stage-item">
+                                            <label>Material Procurement</label>
+                                            <select id="detail-material-proc" class="form-control stage-select">
+                                                <option value="Not Started">Not Started</option>
+                                                <option value="In Progress">In Progress</option>
+                                                <option value="Completed">Completed</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="stage-group">
+                                        <h5>Development Stage</h5>
+                                        <div class="stage-item">
+                                            <label>Pattern Trial</label>
+                                            <select id="detail-pattern" class="form-control stage-select">
+                                                <option value="Not Started">Not Started</option>
+                                                <option value="In Progress">In Progress</option>
+                                                <option value="Completed">Completed</option>
+                                                <option value="Failed">Failed</option>
+                                            </select>
+                                        </div>
+                                        <div class="stage-item">
+                                            <label>Upper Ready</label>
+                                            <select id="detail-upper" class="form-control stage-select">
+                                                <option value="Not Started">Not Started</option>
+                                                <option value="In Progress">In Progress</option>
+                                                <option value="Completed">Completed</option>
+                                            </select>
+                                        </div>
+                                        <div class="stage-item">
+                                            <label>Sole Ready</label>
+                                            <select id="detail-sole" class="form-control stage-select">
+                                                <option value="Not Started">Not Started</option>
+                                                <option value="In Progress">In Progress</option>
+                                                <option value="Completed">Completed</option>
+                                            </select>
+                                        </div>
+                                        <div class="stage-item">
+                                            <label>Assembly</label>
+                                            <select id="detail-assembly" class="form-control stage-select">
+                                                <option value="Not Started">Not Started</option>
+                                                <option value="In Progress">In Progress</option>
+                                                <option value="Completed">Completed</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="stage-group">
+                                        <h5>Final Stage</h5>
+                                        <div class="stage-item">
+                                            <label>Quality Check</label>
+                                            <select id="detail-quality" class="form-control stage-select">
+                                                <option value="Not Started">Not Started</option>
+                                                <option value="In Progress">In Progress</option>
+                                                <option value="Completed">Completed</option>
+                                                <option value="Failed">Failed</option>
+                                            </select>
+                                        </div>
+                                        <div class="stage-item">
+                                            <label>Ready to Ship</label>
+                                            <select id="detail-ready-ship" class="form-control stage-select">
+                                                <option value="false">No</option>
+                                                <option value="true">Yes</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="notes-section">
+                                    <h5>Notes</h5>
+                                    <textarea id="detail-notes" class="form-control" rows="4"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn--primary" onclick="saveSampleChanges()">Save Changes</button>
+                        <button class="btn btn--secondary" onclick="closeSampleModal()">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
