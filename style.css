@@ -162,7 +162,7 @@
     --color-bg-6: rgba(194, 65, 12, 0.15); /* Dark orange */
     --color-bg-7: rgba(190, 24, 93, 0.15); /* Dark pink */
     --color-bg-8: rgba(8, 145, 178, 0.15); /* Dark cyan */
-    
+
     /* Semantic Color Tokens (Dark Mode) */
     --color-background: var(--color-charcoal-700);
     --color-surface: var(--color-charcoal-800);
@@ -222,7 +222,7 @@
   --color-bg-6: rgba(194, 65, 12, 0.15); /* Dark orange */
   --color-bg-7: rgba(190, 24, 93, 0.15); /* Dark pink */
   --color-bg-8: rgba(8, 145, 178, 0.15); /* Dark cyan */
-  
+
   /* Semantic Color Tokens (Dark Mode) */
   --color-background: var(--color-charcoal-700);
   --color-surface: var(--color-charcoal-800);
@@ -268,7 +268,7 @@
   --color-brown-600-rgb: 94, 82, 64;
   --color-teal-500-rgb: 33, 128, 141;
   --color-slate-900-rgb: 19, 52, 59;
-  
+
   /* Semantic Color Tokens (Light Mode) */
   --color-background: var(--color-cream-50);
   --color-surface: var(--color-cream-100);
@@ -738,7 +738,7 @@ select.form-control {
 }
 
 /* END PERPLEXITY DESIGN SYSTEM */
-/* Additional styles for the Sample Tracker Application */
+/* Additional styles for the Enhanced Sample Tracker Application */
 
 /* Header Styles */
 .header {
@@ -818,11 +818,21 @@ select.form-control {
     color: var(--color-text);
 }
 
+/* Dashboard Filters */
+.dashboard-filters {
+    display: flex;
+    gap: var(--space-12);
+    align-items: center;
+    flex-wrap: wrap;
+}
+
 /* Stats Summary */
 .stats-summary {
     display: flex;
     gap: var(--space-24);
     flex-wrap: wrap;
+    margin-bottom: var(--space-24);
+    justify-content: center;
 }
 
 .stat-item {
@@ -830,6 +840,11 @@ select.form-control {
     flex-direction: column;
     align-items: center;
     text-align: center;
+    background: var(--color-surface);
+    padding: var(--space-20);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-card-border);
+    min-width: 120px;
 }
 
 .stat-number {
@@ -881,6 +896,7 @@ select.form-control {
     padding: var(--space-16);
     cursor: pointer;
     transition: all var(--duration-fast) var(--ease-standard);
+    position: relative;
 }
 
 .sample-card:hover {
@@ -921,10 +937,47 @@ select.form-control {
     justify-content: space-between;
     align-items: center;
     font-size: var(--font-size-sm);
+    margin-bottom: var(--space-8);
 }
 
 .sample-card-date {
     color: var(--color-text-secondary);
+}
+
+.sample-card-actions {
+    display: flex;
+    gap: var(--space-8);
+    margin-top: var(--space-8);
+}
+
+.sample-card-actions .btn {
+    padding: var(--space-4) var(--space-8);
+    font-size: var(--font-size-xs);
+}
+
+/* Material completion indicator */
+.material-completion {
+    margin-top: var(--space-8);
+}
+
+.material-progress {
+    width: 100%;
+    height: 4px;
+    background: var(--color-secondary);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+}
+
+.material-progress-bar {
+    height: 100%;
+    background: var(--color-primary);
+    transition: width var(--duration-normal) var(--ease-standard);
+}
+
+.material-progress-text {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+    margin-top: var(--space-4);
 }
 
 /* Status badges */
@@ -963,7 +1016,7 @@ select.form-control {
     border: 1px solid var(--color-card-border);
     border-radius: var(--radius-lg);
     padding: var(--space-24);
-    max-width: 800px;
+    max-width: 1000px;
 }
 
 .form-grid {
@@ -971,6 +1024,41 @@ select.form-control {
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: var(--space-20);
     margin-bottom: var(--space-20);
+}
+
+.form-group--full {
+    grid-column: 1 / -1;
+}
+
+/* Material Details Section */
+.material-details-section {
+    margin: var(--space-24) 0;
+}
+
+.material-details-section h3 {
+    color: var(--color-text);
+    margin-bottom: var(--space-20);
+    padding-bottom: var(--space-8);
+    border-bottom: 2px solid var(--color-primary);
+}
+
+.material-subsections {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-20);
+}
+
+.material-subsection {
+    background: var(--color-bg-1);
+    padding: var(--space-16);
+    border-radius: var(--radius-base);
+    border: 1px solid var(--color-card-border);
+}
+
+.material-subsection h4 {
+    color: var(--color-primary);
+    margin: 0 0 var(--space-12) 0;
+    font-size: var(--font-size-lg);
 }
 
 .photo-preview-container {
@@ -1029,12 +1117,14 @@ select.form-control {
     font-weight: var(--font-weight-semibold);
     color: var(--color-text);
     border-bottom: 1px solid var(--color-border);
+    white-space: nowrap;
 }
 
 .samples-table td {
     padding: var(--space-12) var(--space-16);
     border-bottom: 1px solid var(--color-card-border);
     color: var(--color-text);
+    white-space: nowrap;
 }
 
 .samples-table tr:hover {
@@ -1134,6 +1224,14 @@ select.form-control {
     box-shadow: var(--shadow-lg);
 }
 
+.user-name-modal {
+    max-width: 400px;
+}
+
+.delete-modal {
+    max-width: 450px;
+}
+
 .modal-header {
     display: flex;
     justify-content: space-between;
@@ -1180,27 +1278,61 @@ select.form-control {
     gap: var(--space-12);
 }
 
-/* Sample Detail Content */
-.sample-detail-content {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: var(--space-24);
-}
-
-.sample-info-section {
+/* Tabbed Interface */
+.sample-detail-tabs {
     display: flex;
-    flex-direction: column;
-    gap: var(--space-20);
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: var(--space-20);
 }
 
+.tab-btn {
+    background: none;
+    border: none;
+    padding: var(--space-12) var(--space-16);
+    cursor: pointer;
+    color: var(--color-text-secondary);
+    font-weight: var(--font-weight-medium);
+    border-bottom: 2px solid transparent;
+    transition: all var(--duration-fast) var(--ease-standard);
+}
+
+.tab-btn:hover {
+    color: var(--color-text);
+    background: var(--color-secondary);
+}
+
+.tab-btn.active {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+}
+
+.tab-panel {
+    display: none;
+}
+
+.tab-panel.active {
+    display: block;
+}
+
+/* Sample Detail Content */
 .sample-basic-info h4 {
     margin: 0 0 var(--space-12) 0;
     color: var(--color-primary);
 }
 
-.sample-basic-info p {
-    margin: 0 0 var(--space-6) 0;
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-12);
+}
+
+.info-grid p {
+    margin: 0;
     font-size: var(--font-size-sm);
+}
+
+.sample-photos {
+    margin-top: var(--space-20);
 }
 
 .sample-photos h5 {
@@ -1221,6 +1353,38 @@ select.form-control {
     border-radius: var(--radius-base);
     border: 1px solid var(--color-border);
     cursor: pointer;
+}
+
+/* Material Details Edit */
+.material-details-edit {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-20);
+}
+
+.material-section {
+    background: var(--color-bg-1);
+    padding: var(--space-16);
+    border-radius: var(--radius-base);
+}
+
+.material-section h5 {
+    margin: 0 0 var(--space-12) 0;
+    color: var(--color-primary);
+    font-weight: var(--font-weight-semibold);
+}
+
+.material-inputs {
+    display: grid;
+    grid-template-columns: 1fr 150px 2fr;
+    gap: var(--space-8);
+    align-items: center;
+}
+
+.material-inputs input,
+.material-inputs select {
+    padding: var(--space-6) var(--space-8);
+    font-size: var(--font-size-sm);
 }
 
 .stages-grid {
@@ -1274,6 +1438,90 @@ select.form-control {
     color: var(--color-text);
 }
 
+/* Edit History */
+.edit-history {
+    background: var(--color-bg-1);
+    padding: var(--space-16);
+    border-radius: var(--radius-base);
+}
+
+.edit-history h5 {
+    margin: 0 0 var(--space-16) 0;
+    color: var(--color-text);
+}
+
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12);
+}
+
+.history-item {
+    background: var(--color-surface);
+    padding: var(--space-12);
+    border-radius: var(--radius-base);
+    border: 1px solid var(--color-card-border);
+}
+
+.history-date {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-4);
+}
+
+.history-user {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-primary);
+    font-size: var(--font-size-sm);
+}
+
+.history-action {
+    font-size: var(--font-size-sm);
+    color: var(--color-text);
+    margin: var(--space-4) 0;
+}
+
+.history-details {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+}
+
+/* Warning Text */
+.warning-text {
+    color: var(--color-error);
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-sm);
+}
+
+/* Toast Notifications */
+.toast {
+    position: fixed;
+    top: var(--space-20);
+    right: var(--space-20);
+    background: var(--color-success);
+    color: var(--color-btn-primary-text);
+    padding: var(--space-12) var(--space-16);
+    border-radius: var(--radius-base);
+    box-shadow: var(--shadow-lg);
+    z-index: 1100;
+    animation: slideIn 0.3s ease-out;
+}
+
+.toast.error {
+    background: var(--color-error);
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .header-content {
@@ -1314,7 +1562,7 @@ select.form-control {
     }
     
     .samples-table {
-        min-width: 600px;
+        min-width: 800px;
     }
     
     .kanban-board {
@@ -1325,12 +1573,36 @@ select.form-control {
         padding: var(--space-12);
     }
     
-    .sample-detail-content {
-        grid-template-columns: 1fr;
+    .modal-content {
+        max-height: 95vh;
     }
     
     .stats-summary {
         justify-content: center;
+        gap: var(--space-16);
+    }
+    
+    .stat-item {
+        min-width: 100px;
+        padding: var(--space-16);
+    }
+    
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .material-inputs {
+        grid-template-columns: 1fr;
+        gap: var(--space-8);
+    }
+    
+    .sample-detail-tabs {
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+    
+    .tab-btn {
+        flex-shrink: 0;
     }
 }
 
@@ -1349,6 +1621,15 @@ select.form-control {
     }
     
     .modal-footer {
+        flex-direction: column;
+    }
+    
+    .dashboard-filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .sample-card-actions {
         flex-direction: column;
     }
 }
