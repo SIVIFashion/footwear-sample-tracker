@@ -1553,8 +1553,7 @@ window.exportFilteredSamples = exportFilteredSamples;
 window.exportAllData = exportAllData;
 window.showImportDialog = showImportDialog;
 window.exportToExcel = exportToExcel;
-
-
+window.exportToExcel = exportToExcel;
 
 // ========================================
 // EXPORT ALL DATA FUNCTION
