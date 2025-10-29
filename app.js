@@ -1669,164 +1669,82 @@ function showImportDialog() {
 // ========================================
 async function exportToExcel() {
     try {
-        // Check if ExcelJS is loaded
         if (typeof ExcelJS === 'undefined') {
-            alert('Excel library not loaded. Please refresh the page and try again.');
+            alert('Excel library not loaded. Please refresh the page.');
             return;
         }
 
         const data = localStorage.getItem('footwearSamples');
-        
         if (!data || data === '[]') {
             alert('No data to export!');
             return;
         }
         
         const samples = JSON.parse(data);
+        alert('Preparing Excel file... Please wait.');
         
-        alert('Preparing Excel file with images... This may take a moment.');
-        
-        // Create workbook
         const workbook = new ExcelJS.Workbook();
-        const worksheet = workbook.addWorksheet('Sample Details');
+        const worksheet = workbook.addWorksheet('Samples');
         
-        // Define columns
         worksheet.columns = [
-            { header: 'Sample ID', key: 'id', width: 12 },
+            { header: 'ID', key: 'id', width: 12 },
             { header: 'Photo', key: 'photo', width: 15 },
-            { header: 'Sample Name', key: 'name', width: 25 },
+            { header: 'Name', key: 'name', width: 25 },
             { header: 'Client', key: 'client', width: 20 },
-            { header: 'Date Received', key: 'dateReceived', width: 15 },
-            { header: 'Current Stage', key: 'stage', width: 15 },
-            { header: 'Upper Material Vendor', key: 'upperVendor', width: 20 },
-            { header: 'Upper Material Stage', key: 'upperStage', width: 15 },
-            { header: 'Upper Delivery', key: 'upperDelivery', width: 15 },
-            { header: 'Last Vendor', key: 'lastVendor', width: 20 },
-            { header: 'Last Stage', key: 'lastStage', width: 15 },
-            { header: 'Last Delivery', key: 'lastDelivery', width: 15 },
-            { header: 'Sole Vendor', key: 'soleVendor', width: 20 },
-            { header: 'Sole Stage', key: 'soleStage', width: 15 },
-            { header: 'Sole Delivery', key: 'soleDelivery', width: 15 },
-            { header: 'Pattern Trial', key: 'patternTrial', width: 15 },
-            { header: 'Upper Ready', key: 'upperReady', width: 15 },
-            { header: 'Sole Ready', key: 'soleReady', width: 15 },
-            { header: 'Assembly', key: 'assembly', width: 15 },
-            { header: 'Quality Check', key: 'qualityCheck', width: 15 },
-            { header: 'Last Edited By', key: 'lastEditedBy', width: 20 },
-            { header: 'Last Edited Date', key: 'lastEditedDate', width: 20 }
+            { header: 'Date', key: 'date', width: 15 },
+            { header: 'Stage', key: 'stage', width: 15 },
+            { header: 'Upper Vendor', key: 'upperV', width: 20 },
+            { header: 'Last Vendor', key: 'lastV', width: 20 },
+            { header: 'Sole Vendor', key: 'soleV', width: 20 }
         ];
         
-        // Style header row
-        worksheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFFFF' } };
-        worksheet.getRow(1).fill = {
-            type: 'pattern',
-            pattern: 'solid',
-            fgColor: { argb: 'FF366092' }
-        };
-        worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'center' };
+        worksheet.getRow(1).font = { bold: true };
+        worksheet.getRow(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF4472C4' } };
         
-        // Add data rows with images
         for (let i = 0; i < samples.length; i++) {
-            const sample = samples[i];
-            const rowIndex = i + 2;
-            
-            // Format date
-            function formatDate(dateStr) {
-                if (!dateStr) return '';
-                const d = new Date(dateStr);
-                return d.toLocaleDateString('en-GB');
-            }
-            
-            // Add row data
+            const s = samples[i];
             const row = worksheet.addRow({
-                id: sample.id || '',
-                name: sample.sampleName || '',
-                client: sample.client || '',
-                dateReceived: formatDate(sample.dateReceived),
-                stage: sample.currentStage || '',
-                upperVendor: sample.materialDetails?.upperMaterial?.vendor || '',
-                upperStage: sample.materialDetails?.upperMaterial?.stage || '',
-                upperDelivery: formatDate(sample.materialDetails?.upperMaterial?.deliveryDate),
-                lastVendor: sample.materialDetails?.last?.vendor || '',
-                lastStage: sample.materialDetails?.last?.stage || '',
-                lastDelivery: formatDate(sample.materialDetails?.last?.deliveryDate),
-                soleVendor: sample.materialDetails?.sole?.vendor || '',
-                soleStage: sample.materialDetails?.sole?.stage || '',
-                soleDelivery: formatDate(sample.materialDetails?.sole?.deliveryDate),
-                patternTrial: sample.developmentStages?.patternTrial?.status || '',
-                upperReady: sample.developmentStages?.upperReady?.status || '',
-                soleReady: sample.developmentStages?.soleReady?.status || '',
-                assembly: sample.developmentStages?.assembly?.status || '',
-                qualityCheck: sample.developmentStages?.qualityCheck?.status || '',
-                lastEditedBy: sample.lastEditedBy || '',
-                lastEditedDate: formatDate(sample.lastEditedDate)
+                id: s.id || '',
+                name: s.sampleName || '',
+                client: s.client || '',
+                date: s.dateReceived || '',
+                stage: s.currentStage || '',
+                upperV: (s.materialDetails && s.materialDetails.upperMaterial) ? s.materialDetails.upperMaterial.vendor : '',
+                lastV: (s.materialDetails && s.materialDetails.last) ? s.materialDetails.last.vendor : '',
+                soleV: (s.materialDetails && s.materialDetails.sole) ? s.materialDetails.sole.vendor : ''
             });
             
-            // Set row height for images
             row.height = 80;
             
-            // Add image if available
-            if (sample.photos && sample.photos.length > 0 && sample.photos[0]) {
+            if (s.photos && s.photos.length > 0 && s.photos[0]) {
                 try {
-                    const base64Image = sample.photos;
-                    
-                    // Remove data URL prefix if present
-                    const base64Data = base64Image.replace(/^data:image\/\w+;base64,/, '');
-                    
-                    // Add image to workbook
-                    const imageId = workbook.addImage({
-                        base64: base64Data,
-                        extension: 'png'
-                    });
-                    
-                    // Add image to cell (column B, which is index 1)
+                    const img = s.photos[0].replace(/^data:image\/\w+;base64,/, '');
+                    const imageId = workbook.addImage({ base64: img, extension: 'png' });
                     worksheet.addImage(imageId, {
-                        tl: { col: 1, row: rowIndex - 1 },
-                        br: { col: 2, row: rowIndex },
+                        tl: { col: 1, row: i + 1 },
+                        br: { col: 2, row: i + 2 },
                         editAs: 'oneCell'
                     });
-                } catch (imgError) {
-                    console.log('Error adding image for sample ' + sample.id, imgError);
-                    // Continue without image
+                } catch (e) {
+                    console.log('Image error:', e);
                 }
             }
-            
-            // Apply borders to all cells
-            row.eachCell({ includeEmpty: true }, function(cell) {
-                cell.border = {
-                    top: { style: 'thin' },
-                    left: { style: 'thin' },
-                    bottom: { style: 'thin' },
-                    right: { style: 'thin' }
-                };
-                cell.alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
-            });
         }
         
-        // Generate Excel file
         const buffer = await workbook.xlsx.writeBuffer();
-        
-        // Create blob and download
-        const blob = new Blob([buffer], { 
-            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
-        });
-        
+        const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        
-        const dateStr = new Date().toISOString().split('T');
-        link.download = 'Footwear_Samples_' + dateStr + '.xlsx';
-        
+        link.download = 'Samples_' + new Date().toISOString().split('T')[0] + '.xlsx';
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
         
-        alert('Excel file with images exported successfully!');
-        
+        alert('Excel exported successfully!');
     } catch (error) {
-        console.error('Excel export error:', error);
-        alert('Error exporting to Excel: ' + error.message);
+        console.error('Error:', error);
+        alert('Error: ' + error.message);
     }
 }
