@@ -1537,6 +1537,22 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('Application initialized with', samples.length, 'samples');
 });
 
+// Make functions globally available
+window.showView = showView;
+window.switchTab = switchTab;
+window.openSampleModal = openSampleModal;
+window.closeSampleModal = closeSampleModal;
+window.saveSampleChanges = saveSampleChanges;
+window.confirmDeleteSample = confirmDeleteSample;
+window.confirmDelete = confirmDelete;
+window.cancelDelete = cancelDelete;
+window.confirmUserName = confirmUserName;
+window.cancelUserName = cancelUserName;
+window.clearForm = clearForm;
+window.exportFilteredSamples = exportFilteredSamples;
+
+
+
 // ========================================
 // EXPORT ALL DATA FUNCTION
 // ========================================
@@ -1564,15 +1580,15 @@ function exportAllData() {
         const link = document.createElement('a');
         link.href = url;
         
-        const dateStr = new Date().toISOString().split('T');
-        link.download = `footwear_samples_backup_${dateStr}.json`;
+        const dateStr = new Date().toISOString().split('T')[0];
+        link.download = 'footwear_samples_backup_' + dateStr + '.json';
         
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
         
-        alert(`Successfully exported ${samples.length} samples!`);
+        alert('Successfully exported ' + samples.length + ' samples!');
     } catch (error) {
         console.error('Export error:', error);
         alert('Error exporting data. Please try again.');
@@ -1588,7 +1604,7 @@ function showImportDialog() {
     input.accept = '.json';
     
     input.onchange = function(e) {
-        const file = e.target.files;
+        const file = e.target.files[0];
         if (!file) return;
         
         const reader = new FileReader();
@@ -1602,13 +1618,13 @@ function showImportDialog() {
                     return;
                 }
                 
-                const message = `Import ${importData.sampleCount} samples?\n\n` +
-                               `Choose:\n` +
-                               `OK = Replace all existing data\n` +
-                               `Cancel = Don't import`;
+                const message = 'Import ' + importData.sampleCount + ' samples?\n\n' +
+                               'This will REPLACE all your current data.\n\n' +
+                               'Click OK to continue or Cancel to abort.';
                 
                 if (confirm(message)) {
-                    importData.data.forEach(sample => {
+                    // Add missing fields for compatibility
+                    importData.data.forEach(function(sample) {
                         if (!sample.materialDetails) {
                             sample.materialDetails = {
                                 upperMaterial: { vendor: '', stage: 'Not Started', deliveryDate: '', notes: '' },
@@ -1631,7 +1647,7 @@ function showImportDialog() {
                     
                     localStorage.setItem('footwearSamples', JSON.stringify(importData.data));
                     
-                    alert(`Successfully imported ${importData.data.length} samples! Refreshing page...`);
+                    alert('Successfully imported ' + importData.data.length + ' samples! Page will refresh now.');
                     
                     window.location.reload();
                 }
@@ -1646,18 +1662,3 @@ function showImportDialog() {
     input.click();
 }
 
-
-
-// Make functions globally available
-window.showView = showView;
-window.switchTab = switchTab;
-window.openSampleModal = openSampleModal;
-window.closeSampleModal = closeSampleModal;
-window.saveSampleChanges = saveSampleChanges;
-window.confirmDeleteSample = confirmDeleteSample;
-window.confirmDelete = confirmDelete;
-window.cancelDelete = cancelDelete;
-window.confirmUserName = confirmUserName;
-window.cancelUserName = cancelUserName;
-window.clearForm = clearForm;
-window.exportFilteredSamples = exportFilteredSamples;
