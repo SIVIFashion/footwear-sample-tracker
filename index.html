@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Footwear Sample Tracker</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/exceljs@4.3.0/dist/exceljs.min.js"></script>
+
 </head>
 <body>
     <!-- Header -->
@@ -21,6 +23,9 @@
                     </button>
                     <button onclick="showImportDialog()" style="padding: 10px 20px; background: #8b5cf6; color: white; border: none; border-radius: 5px; cursor: pointer;">
                         📥 Import Data
+                    </button>
+                    <button onclick="exportToExcel()" style="padding: 10px 20px; background: #10b981; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                    📊 Export Excel (with Images)
                     </button>
                 </div>
 
