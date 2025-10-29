@@ -1553,7 +1553,6 @@ window.exportFilteredSamples = exportFilteredSamples;
 window.exportAllData = exportAllData;
 window.showImportDialog = showImportDialog;
 window.exportToExcel = exportToExcel;
-window.exportToExcel = exportToExcel;
 
 // ========================================
 // EXPORT ALL DATA FUNCTION
@@ -1767,7 +1766,7 @@ async function exportToExcel() {
             row.height = 80;
             
             // Add image if available
-            if (sample.photos && sample.photos.length > 0 && sample.photos) {
+            if (sample.photos && sample.photos.length > 0 && sample.photos[0]) {
                 try {
                     const base64Image = sample.photos;
                     
