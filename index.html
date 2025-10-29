@@ -7,6 +7,13 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- Export/Import Buttons -->
+    <div style="margin: 10px; display: flex; gap: 10px; flex-wrap: wrap;">
+      <button id="exportBtn" style="padding: 8px 12px;">📥 Export Data</button>
+      <button id="importBtn" style="padding: 8px 12px;">📤 Import Data</button>
+      <input type="file" id="importFile" style="display:none;" accept=".json" />
+    </div>
+    
     <!-- Header -->
     <header class="header">
         <div class="container">
