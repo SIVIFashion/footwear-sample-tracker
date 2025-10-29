@@ -1550,6 +1550,8 @@ window.confirmUserName = confirmUserName;
 window.cancelUserName = cancelUserName;
 window.clearForm = clearForm;
 window.exportFilteredSamples = exportFilteredSamples;
+window.exportAllData = exportAllData;
+window.showImportDialog = showImportDialog;
 
 
 
