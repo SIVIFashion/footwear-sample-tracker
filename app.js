@@ -1537,6 +1537,117 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('Application initialized with', samples.length, 'samples');
 });
 
+// ========================================
+// EXPORT ALL DATA FUNCTION
+// ========================================
+function exportAllData() {
+    try {
+        const data = localStorage.getItem('footwearSamples');
+        
+        if (!data || data === '[]') {
+            alert('No data to export!');
+            return;
+        }
+        
+        const samples = JSON.parse(data);
+        
+        const exportData = {
+            exportDate: new Date().toISOString(),
+            exportVersion: '1.0',
+            sampleCount: samples.length,
+            data: samples
+        };
+        
+        const jsonString = JSON.stringify(exportData, null, 2);
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        
+        const dateStr = new Date().toISOString().split('T');
+        link.download = `footwear_samples_backup_${dateStr}.json`;
+        
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        
+        alert(`Successfully exported ${samples.length} samples!`);
+    } catch (error) {
+        console.error('Export error:', error);
+        alert('Error exporting data. Please try again.');
+    }
+}
+
+// ========================================
+// IMPORT DATA FUNCTIONS
+// ========================================
+function showImportDialog() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    
+    input.onchange = function(e) {
+        const file = e.target.files;
+        if (!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            try {
+                const content = event.target.result;
+                const importData = JSON.parse(content);
+                
+                if (!importData.data || !Array.isArray(importData.data)) {
+                    alert('Invalid file format!');
+                    return;
+                }
+                
+                const message = `Import ${importData.sampleCount} samples?\n\n` +
+                               `Choose:\n` +
+                               `OK = Replace all existing data\n` +
+                               `Cancel = Don't import`;
+                
+                if (confirm(message)) {
+                    importData.data.forEach(sample => {
+                        if (!sample.materialDetails) {
+                            sample.materialDetails = {
+                                upperMaterial: { vendor: '', stage: 'Not Started', deliveryDate: '', notes: '' },
+                                last: { vendor: '', stage: 'Not Started', deliveryDate: '', notes: '' },
+                                sole: { vendor: '', stage: 'Not Started', deliveryDate: '', notes: '' },
+                                otherMaterial1: { name: '', vendor: '', stage: 'Not Started', deliveryDate: '', notes: '' },
+                                otherMaterial2: { name: '', vendor: '', stage: 'Not Started', deliveryDate: '', notes: '' }
+                            };
+                        }
+                        if (!sample.developmentStages) {
+                            sample.developmentStages = {
+                                patternTrial: { status: 'Not Started', deliveryDate: '', notes: '' },
+                                upperReady: { status: 'Not Started', deliveryDate: '', notes: '' },
+                                soleReady: { status: 'Not Started', deliveryDate: '', notes: '' },
+                                assembly: { status: 'Not Started', deliveryDate: '', notes: '' },
+                                qualityCheck: { status: 'Not Started', deliveryDate: '', notes: '' }
+                            };
+                        }
+                    });
+                    
+                    localStorage.setItem('footwearSamples', JSON.stringify(importData.data));
+                    
+                    alert(`Successfully imported ${importData.data.length} samples! Refreshing page...`);
+                    
+                    window.location.reload();
+                }
+            } catch (error) {
+                console.error('Import error:', error);
+                alert('Error reading file. Make sure it is a valid JSON backup file.');
+            }
+        };
+        reader.readAsText(file);
+    };
+    
+    input.click();
+}
+
+
+
 // Make functions globally available
 window.showView = showView;
 window.switchTab = switchTab;
