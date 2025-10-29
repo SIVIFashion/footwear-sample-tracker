@@ -1665,7 +1665,7 @@ function showImportDialog() {
 
 
 // ========================================
-// EXPORT TO EXCEL WITH IMAGES
+// EXPORT TO EXCEL WITH IMAGES - WITH PROGRESS
 // ========================================
 async function exportToExcel() {
     try {
@@ -1681,70 +1681,197 @@ async function exportToExcel() {
         }
         
         const samples = JSON.parse(data);
-        alert('Preparing Excel file... Please wait.');
         
-        const workbook = new ExcelJS.Workbook();
-        const worksheet = workbook.addWorksheet('Samples');
-        
-        worksheet.columns = [
-            { header: 'ID', key: 'id', width: 12 },
-            { header: 'Photo', key: 'photo', width: 15 },
-            { header: 'Name', key: 'name', width: 25 },
-            { header: 'Client', key: 'client', width: 20 },
-            { header: 'Date', key: 'date', width: 15 },
-            { header: 'Stage', key: 'stage', width: 15 },
-            { header: 'Upper Vendor', key: 'upperV', width: 20 },
-            { header: 'Last Vendor', key: 'lastV', width: 20 },
-            { header: 'Sole Vendor', key: 'soleV', width: 20 }
-        ];
-        
-        worksheet.getRow(1).font = { bold: true };
-        worksheet.getRow(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF4472C4' } };
-        
+        // Count samples with images
+        let samplesWithImages = 0;
         for (let i = 0; i < samples.length; i++) {
-            const s = samples[i];
-            const row = worksheet.addRow({
-                id: s.id || '',
-                name: s.sampleName || '',
-                client: s.client || '',
-                date: s.dateReceived || '',
-                stage: s.currentStage || '',
-                upperV: (s.materialDetails && s.materialDetails.upperMaterial) ? s.materialDetails.upperMaterial.vendor : '',
-                lastV: (s.materialDetails && s.materialDetails.last) ? s.materialDetails.last.vendor : '',
-                soleV: (s.materialDetails && s.materialDetails.sole) ? s.materialDetails.sole.vendor : ''
-            });
-            
-            row.height = 80;
-            
-            if (s.photos && s.photos.length > 0 && s.photos[0]) {
-                try {
-                    const img = s.photos[0].replace(/^data:image\/\w+;base64,/, '');
-                    const imageId = workbook.addImage({ base64: img, extension: 'png' });
-                    worksheet.addImage(imageId, {
-                        tl: { col: 1, row: i + 1 },
-                        br: { col: 2, row: i + 2 },
-                        editAs: 'oneCell'
-                    });
-                } catch (e) {
-                    console.log('Image error:', e);
-                }
+            if (samples[i].photos && samples[i].photos.length > 0 && samples[i].photos[0]) {
+                samplesWithImages++;
             }
         }
         
+        // Estimate time (roughly 1-2 seconds per image)
+        const estimatedSeconds = samplesWithImages * 2;
+        const estimatedMinutes = Math.ceil(estimatedSeconds / 60);
+        
+        const confirmMsg = 'Export Details:\n\n' +
+                          '• Total Samples: ' + samples.length + '\n' +
+                          '• Samples with Photos: ' + samplesWithImages + '\n' +
+                          '• Estimated Time: ' + (estimatedMinutes < 1 ? estimatedSeconds + ' seconds' : estimatedMinutes + ' minute(s)') + '\n\n' +
+                          'Click OK to start export.\n' +
+                          '(Only first photo per sample will be exported)';
+        
+        if (!confirm(confirmMsg)) {
+            return;
+        }
+        
+        // Create progress indicator
+        const progressDiv = document.createElement('div');
+        progressDiv.id = 'excel-progress';
+        progressDiv.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); ' +
+                                    'background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); ' +
+                                    'z-index: 10000; min-width: 300px; text-align: center;';
+        progressDiv.innerHTML = '<h3 style="margin: 0 0 15px 0;">Exporting Excel...</h3>' +
+                               '<div id="progress-text" style="margin: 10px 0; font-size: 14px;">Starting...</div>' +
+                               '<div style="background: #e0e0e0; height: 20px; border-radius: 10px; overflow: hidden;">' +
+                               '<div id="progress-bar" style="background: #4CAF50; height: 100%; width: 0%; transition: width 0.3s;"></div>' +
+                               '</div>';
+        document.body.appendChild(progressDiv);
+        
+        const progressText = document.getElementById('progress-text');
+        const progressBar = document.getElementById('progress-bar');
+        
+        // Create workbook
+        progressText.textContent = 'Creating workbook...';
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('Sample Details');
+        
+        // Define columns
+        worksheet.columns = [
+            { header: 'Sample ID', key: 'id', width: 12 },
+            { header: 'Photo', key: 'photo', width: 15 },
+            { header: 'Sample Name', key: 'name', width: 25 },
+            { header: 'Client', key: 'client', width: 20 },
+            { header: 'Date Received', key: 'dateReceived', width: 15 },
+            { header: 'Current Stage', key: 'stage', width: 15 },
+            { header: 'Upper Vendor', key: 'upperVendor', width: 20 },
+            { header: 'Upper Stage', key: 'upperStage', width: 15 },
+            { header: 'Last Vendor', key: 'lastVendor', width: 20 },
+            { header: 'Last Stage', key: 'lastStage', width: 15 },
+            { header: 'Sole Vendor', key: 'soleVendor', width: 20 },
+            { header: 'Sole Stage', key: 'soleStage', width: 15 },
+            { header: 'Pattern Trial', key: 'patternTrial', width: 15 },
+            { header: 'Upper Ready', key: 'upperReady', width: 15 },
+            { header: 'Sole Ready', key: 'soleReady', width: 15 },
+            { header: 'Assembly', key: 'assembly', width: 15 },
+            { header: 'Quality Check', key: 'qualityCheck', width: 15 },
+            { header: 'Last Edited By', key: 'lastEditedBy', width: 20 }
+        ];
+        
+        // Style header row
+        worksheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFFFF' } };
+        worksheet.getRow(1).fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'FF366092' }
+        };
+        worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'center' };
+        
+        // Add data rows with images
+        for (let i = 0; i < samples.length; i++) {
+            const sample = samples[i];
+            const rowIndex = i + 2;
+            
+            // Update progress
+            const percentComplete = Math.round((i / samples.length) * 100);
+            progressBar.style.width = percentComplete + '%';
+            progressText.textContent = 'Processing sample ' + (i + 1) + ' of ' + samples.length + '...';
+            
+            // Add row data
+            const row = worksheet.addRow({
+                id: sample.id || '',
+                name: sample.sampleName || '',
+                client: sample.client || '',
+                dateReceived: sample.dateReceived || '',
+                stage: sample.currentStage || '',
+                upperVendor: (sample.materialDetails && sample.materialDetails.upperMaterial) ? sample.materialDetails.upperMaterial.vendor : '',
+                upperStage: (sample.materialDetails && sample.materialDetails.upperMaterial) ? sample.materialDetails.upperMaterial.stage : '',
+                lastVendor: (sample.materialDetails && sample.materialDetails.last) ? sample.materialDetails.last.vendor : '',
+                lastStage: (sample.materialDetails && sample.materialDetails.last) ? sample.materialDetails.last.stage : '',
+                soleVendor: (sample.materialDetails && sample.materialDetails.sole) ? sample.materialDetails.sole.vendor : '',
+                soleStage: (sample.materialDetails && sample.materialDetails.sole) ? sample.materialDetails.sole.stage : '',
+                patternTrial: (sample.developmentStages && sample.developmentStages.patternTrial) ? sample.developmentStages.patternTrial.status : '',
+                upperReady: (sample.developmentStages && sample.developmentStages.upperReady) ? sample.developmentStages.upperReady.status : '',
+                soleReady: (sample.developmentStages && sample.developmentStages.soleReady) ? sample.developmentStages.soleReady.status : '',
+                assembly: (sample.developmentStages && sample.developmentStages.assembly) ? sample.developmentStages.assembly.status : '',
+                qualityCheck: (sample.developmentStages && sample.developmentStages.qualityCheck) ? sample.developmentStages.qualityCheck.status : '',
+                lastEditedBy: sample.lastEditedBy || ''
+            });
+            
+            // Set row height for images
+            row.height = 80;
+            
+            // Add ONLY FIRST image if available
+            if (sample.photos && Array.isArray(sample.photos) && sample.photos.length > 0 && sample.photos[0]) {
+                try {
+                    const firstPhoto = sample.photos[0]; // Take only first photo
+                    
+                    if (firstPhoto && typeof firstPhoto === 'string') {
+                        // Remove data URL prefix if present
+                        const base64Data = firstPhoto.replace(/^data:image\/\w+;base64,/, '');
+                        
+                        // Add image to workbook
+                        const imageId = workbook.addImage({
+                            base64: base64Data,
+                            extension: 'png'
+                        });
+                        
+                        // Add image to cell (Photo column = column B = index 1)
+                        worksheet.addImage(imageId, {
+                            tl: { col: 1, row: rowIndex - 1 },
+                            br: { col: 2, row: rowIndex },
+                            editAs: 'oneCell'
+                        });
+                    }
+                } catch (imgError) {
+                    console.log('Could not add image for sample ' + sample.id + ':', imgError.message);
+                    // Continue without failing the whole export
+                }
+            }
+            
+            // Apply borders to all cells
+            row.eachCell({ includeEmpty: true }, function(cell) {
+                cell.border = {
+                    top: { style: 'thin' },
+                    left: { style: 'thin' },
+                    bottom: { style: 'thin' },
+                    right: { style: 'thin' }
+                };
+                cell.alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
+            });
+            
+            // Small pause every 5 samples to keep UI responsive
+            if (i > 0 && i % 5 === 0) {
+                await new Promise(resolve => setTimeout(resolve, 50));
+            }
+        }
+        
+        // Generate Excel file
+        progressText.textContent = 'Generating Excel file...';
+        progressBar.style.width = '100%';
+        
         const buffer = await workbook.xlsx.writeBuffer();
-        const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        
+        // Create blob and download
+        const blob = new Blob([buffer], { 
+            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+        });
+        
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = 'Samples_' + new Date().toISOString().split('T')[0] + '.xlsx';
+        
+        const dateStr = new Date().toISOString().split('T')[0];
+        link.download = 'Footwear_Samples_' + dateStr + '.xlsx';
+        
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
         
-        alert('Excel exported successfully!');
+        // Remove progress indicator
+        document.body.removeChild(progressDiv);
+        
+        alert('Excel file with images exported successfully!\n\n' + samples.length + ' samples exported.');
+        
     } catch (error) {
-        console.error('Error:', error);
-        alert('Error: ' + error.message);
+        // Remove progress indicator if it exists
+        const progressDiv = document.getElementById('excel-progress');
+        if (progressDiv) {
+            document.body.removeChild(progressDiv);
+        }
+        
+        console.error('Excel export error:', error);
+        alert('Error exporting Excel: ' + error.message);
     }
 }
