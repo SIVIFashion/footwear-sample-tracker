@@ -559,7 +559,7 @@ function exportAllData() {
 }
 
 // ========================================
-// IMPORT DATA FUNCTIONS
+// IMPORT DATA FUNCTIONS (IMPROVED)
 // ========================================
 function showImportDialog() {
     const input = document.createElement('input');
@@ -567,7 +567,7 @@ function showImportDialog() {
     input.accept = '.json';
     
     input.onchange = function(e) {
-        const file = e.target.files[0];
+        const file = e.target.files;
         if (!file) return;
         
         const reader = new FileReader();
@@ -576,17 +576,29 @@ function showImportDialog() {
                 const content = event.target.result;
                 const importData = JSON.parse(content);
                 
-                // Handle both old and new export formats
+                // Handle multiple JSON formats
                 let dataToImport = [];
                 
                 if (Array.isArray(importData)) {
-                    // Old format: direct array of samples
+                    // Format 1: Direct array of samples
                     dataToImport = importData;
+                    console.log('Format 1 detected: Direct array');
                 } else if (importData.data && Array.isArray(importData.data)) {
-                    // New format: {exportDate, data, sampleCount}
+                    // Format 2: Object with data property
                     dataToImport = importData.data;
+                    console.log('Format 2 detected: Object with data property');
+                } else if (importData.samples && Array.isArray(importData.samples)) {
+                    // Format 3: Object with samples property
+                    dataToImport = importData.samples;
+                    console.log('Format 3 detected: Object with samples property');
                 } else {
-                    alert('Invalid file format! Could not find samples array.');
+                    console.log('Available keys:', Object.keys(importData));
+                    alert('Could not find samples in JSON. Available formats:\n- Array of samples\n- Object with "data" property\n- Object with "samples" property\n\nConsole shows available keys.');
+                    return;
+                }
+                
+                if (!Array.isArray(dataToImport)) {
+                    alert('Samples is not an array!');
                     return;
                 }
                 
@@ -595,21 +607,25 @@ function showImportDialog() {
                     return;
                 }
                 
+                console.log('Total samples to import:', dataToImport.length);
+                
                 const message = 'Import ' + dataToImport.length + ' samples?\n\n' +
                                'This will REPLACE all your current data.\n\n' +
                                'Click OK to continue or Cancel to abort.';
                 
                 if (confirm(message)) {
                     // Ensure all required fields exist
-                    dataToImport.forEach(function(sample) {
-                        if (!sample.id) sample.id = 'FS-' + Math.random().toString(36).substr(2, 9);
-                        if (!sample.sampleName) sample.sampleName = 'Untitled';
-                        if (!sample.client) sample.client = 'Unknown';
+                    dataToImport.forEach(function(sample, index) {
+                        if (!sample.id) sample.id = 'FS-' + String(index + 1).padStart(3, '0');
+                        if (!sample.sampleName) sample.sampleName = 'Sample ' + (index + 1);
+                        if (!sample.client) sample.client = 'Unknown Client';
                         if (!sample.photos) sample.photos = [];
+                        if (!Array.isArray(sample.photos)) sample.photos = [];
                         if (!sample.notes) sample.notes = '';
                         if (!sample.currentStage) sample.currentStage = 'Material';
                         if (!sample.lastEditedBy) sample.lastEditedBy = 'Imported';
                         if (!sample.lastEditedDate) sample.lastEditedDate = new Date().toISOString();
+                        if (!sample.dateReceived) sample.dateReceived = new Date().toISOString().split('T');
                         
                         if (!sample.materialDetails) {
                             sample.materialDetails = {
@@ -631,13 +647,24 @@ function showImportDialog() {
                         }
                     });
                     
-                    localStorage.setItem('footwearSamples', JSON.stringify(dataToImport));
-                    alert('Successfully imported ' + dataToImport.length + ' samples! Page will refresh now.');
-                    window.location.reload();
+                    try {
+                        localStorage.setItem('footwearSamples', JSON.stringify(dataToImport));
+                        console.log('Successfully saved to localStorage');
+                        alert('Successfully imported ' + dataToImport.length + ' samples! Page will refresh now.');
+                        window.location.reload();
+                    } catch (storageError) {
+                        if (storageError.name === 'QuotaExceededError') {
+                            alert('Storage quota exceeded! Your data is too large.\n\nTry:\n1. Importing fewer samples\n2. Ensuring photos were removed\n3. Check file size is under 4MB');
+                        } else {
+                            alert('Error saving to storage: ' + storageError.message);
+                        }
+                        console.error('Storage error:', storageError);
+                    }
                 }
             } catch (error) {
                 console.error('Import error:', error);
-                alert('Error reading file: ' + error.message + '\n\nMake sure it is a valid JSON backup file exported from this tracker.');
+                console.error('Error stack:', error.stack);
+                alert('Error reading file:\n' + error.message + '\n\nMake sure it is a valid JSON file.');
             }
         };
         reader.readAsText(file);
