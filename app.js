@@ -567,7 +567,7 @@ function showImportDialog() {
     input.accept = '.json';
     
     input.onchange = function(e) {
-        const file = e.target.files;
+        const file = e.target.files[0];
         if (!file) return;
         
         const reader = new FileReader();
@@ -576,17 +576,41 @@ function showImportDialog() {
                 const content = event.target.result;
                 const importData = JSON.parse(content);
                 
-                if (!importData.data || !Array.isArray(importData.data)) {
-                    alert('Invalid file format!');
+                // Handle both old and new export formats
+                let dataToImport = [];
+                
+                if (Array.isArray(importData)) {
+                    // Old format: direct array of samples
+                    dataToImport = importData;
+                } else if (importData.data && Array.isArray(importData.data)) {
+                    // New format: {exportDate, data, sampleCount}
+                    dataToImport = importData.data;
+                } else {
+                    alert('Invalid file format! Could not find samples array.');
                     return;
                 }
                 
-                const message = 'Import ' + importData.sampleCount + ' samples?\n\n' +
+                if (dataToImport.length === 0) {
+                    alert('No samples found in file!');
+                    return;
+                }
+                
+                const message = 'Import ' + dataToImport.length + ' samples?\n\n' +
                                'This will REPLACE all your current data.\n\n' +
                                'Click OK to continue or Cancel to abort.';
                 
                 if (confirm(message)) {
-                    importData.data.forEach(function(sample) {
+                    // Ensure all required fields exist
+                    dataToImport.forEach(function(sample) {
+                        if (!sample.id) sample.id = 'FS-' + Math.random().toString(36).substr(2, 9);
+                        if (!sample.sampleName) sample.sampleName = 'Untitled';
+                        if (!sample.client) sample.client = 'Unknown';
+                        if (!sample.photos) sample.photos = [];
+                        if (!sample.notes) sample.notes = '';
+                        if (!sample.currentStage) sample.currentStage = 'Material';
+                        if (!sample.lastEditedBy) sample.lastEditedBy = 'Imported';
+                        if (!sample.lastEditedDate) sample.lastEditedDate = new Date().toISOString();
+                        
                         if (!sample.materialDetails) {
                             sample.materialDetails = {
                                 upperMaterial: { vendor: '', stage: 'Not Started', deliveryDate: '', notes: '' },
@@ -607,13 +631,13 @@ function showImportDialog() {
                         }
                     });
                     
-                    localStorage.setItem('footwearSamples', JSON.stringify(importData.data));
-                    alert('Successfully imported ' + importData.data.length + ' samples! Page will refresh now.');
+                    localStorage.setItem('footwearSamples', JSON.stringify(dataToImport));
+                    alert('Successfully imported ' + dataToImport.length + ' samples! Page will refresh now.');
                     window.location.reload();
                 }
             } catch (error) {
                 console.error('Import error:', error);
-                alert('Error reading file. Make sure it is a valid JSON backup file.');
+                alert('Error reading file: ' + error.message + '\n\nMake sure it is a valid JSON backup file exported from this tracker.');
             }
         };
         reader.readAsText(file);
@@ -621,6 +645,7 @@ function showImportDialog() {
     
     input.click();
 }
+
 
 // ========================================
 // EXPORT TO EXCEL WITH IMAGES
