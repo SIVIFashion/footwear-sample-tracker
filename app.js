@@ -107,6 +107,62 @@ const initialSampleData = [
         ]
     }
 ];
+// ========================================
+// PHOTO COMPRESSION FUNCTION
+// ========================================
+function compressImage(base64String, maxWidth = 800, maxHeight = 800, quality = 0.7) {
+    return new Promise((resolve, reject) => {
+        try {
+            const img = new Image();
+            
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
+                
+                if (width > height) {
+                    if (width > maxWidth) {
+                        height = Math.round(height * (maxWidth / width));
+                        width = maxWidth;
+                    }
+                } else {
+                    if (height > maxHeight) {
+                        width = Math.round(width * (maxHeight / height));
+                        height = maxHeight;
+                    }
+                }
+                
+                canvas.width = width;
+                canvas.height = height;
+                
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                
+                const compressedBase64 = canvas.toDataURL('image/jpeg', quality);
+                
+                const originalSize = base64String.length;
+                const compressedSize = compressedBase64.length;
+                const ratio = Math.round((1 - compressedSize / originalSize) * 100);
+                
+                console.log('Photo compressed: ' + ratio + '% smaller');
+                
+                resolve(compressedBase64);
+            };
+            
+            img.onerror = function() {
+                console.log('Could not load image, using original');
+                resolve(base64String);
+            };
+            
+            img.src = base64String;
+            
+        } catch (error) {
+            console.log('Compression error:', error);
+            resolve(base64String);
+        }
+    });
+}
+
 
 // Local Storage Functions
 function saveToLocalStorage() {
@@ -1191,10 +1247,12 @@ function setupAddSampleForm() {
             input.addEventListener('change', async (e) => {
                 const files = Array.from(e.target.files);
                 for (const file of files) {
-                    if (file.type.startsWith('image/')) {
-                        try {
-                            const base64 = await convertFileToBase64(file);
-                            createPhotoPreview(base64, 0, previewContainer);
+    if (file.type.startsWith('image')) {
+        try {
+            let base64 = await convertFileToBase64(file);
+            // COMPRESS the photo
+            base64 = await compressImage(base64);
+            createPhotoPreview(base64, 0, previewContainer);
                         } catch (error) {
                             console.error('Error converting file to base64:', error);
                         }
@@ -1359,11 +1417,16 @@ function setupModalPhotoUpload() {
                 
                 const files = Array.from(e.target.files);
                 for (const file of files) {
-                    if (file.type.startsWith('image/')) {
-                        try {
-                            const base64 = await convertFileToBase64(file);
-                            if (!sample.photos) sample.photos = [];
-                            sample.photos.push(base64);
+    if (file.type.startsWith('image')) {
+        try {
+            let base64 = await convertFileToBase64(file);
+            // COMPRESS the photo
+            base64 = await compressImage(base64);
+            if (!sample.photos) {
+                sample.photos = [];
+            }
+            sample.photos.push(base64);
+
                         } catch (error) {
                             console.error('Error converting file to base64:', error);
                         }
