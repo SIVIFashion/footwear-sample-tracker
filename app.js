@@ -1760,3 +1760,74 @@ function showImportDialog() {
           'Total Photo Data Size: ' + Math.round(totalPhotoSize / 1024 / 1024) + ' MB\n\n' +
           'If total size is over 10MB, Excel export will be very slow.');
 }
+// ====================
+//  GITHUB SYNC CONFIG
+// ====================
+
+// Replace with your details:
+const GITHUB_TOKEN = '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'; // Keep private, do not publish
+const GITHUB_USERNAME = 'sivifashion';
+const GITHUB_REPO = 'footwear-sample-tracker';
+const GITHUB_FILEPATH = 'live-samples.json'; // Change if your file is named differently
+
+// Helper to create basic auth header:
+function getGithubHeaders() {
+    return {
+        'Authorization': 'token ' + GITHUB_TOKEN,
+        'Accept': 'application/vnd.github.v3+json'
+    };
+}
+
+// ============================
+//  SAVE TO GITHUB AS JSON
+// ============================
+async function saveToGitHub() {
+    const samplesJSON = localStorage.getItem('footwearSamples');
+    if (!samplesJSON) {
+        alert('No samples to save!');
+        return;
+    }
+
+    // First, get the existing file to get the current SHA
+    const apiURL = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/${GITHUB_FILEPATH}`;
+    let fileSHA = null;
+
+    // Get current SHA for versioning
+    let resp = await fetch(apiURL, {headers: getGithubHeaders()});
+    const data = await resp.json();
+    fileSHA = data.sha;
+
+    // Now, upload new content
+    const result = await fetch(apiURL, {
+        method: 'PUT',
+        headers: getGithubHeaders(),
+        body: JSON.stringify({
+            message: 'Update sample tracker data',
+            content: btoa(unescape(encodeURIComponent(samplesJSON))),
+            sha: fileSHA
+        })
+    });
+
+    if (result.ok) {
+        alert('Data saved to GitHub!');
+    } else {
+        alert('Error saving to GitHub!');
+    }
+}
+
+// ===========================
+// LOAD FROM GITHUB AS JSON
+// ===========================
+async function loadFromGitHub() {
+    const apiURL = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/${GITHUB_FILEPATH}`;
+    const resp = await fetch(apiURL, {headers: getGithubHeaders()});
+    const data = await resp.json();
+    const decodedContent = decodeURIComponent(escape(atob(data.content)));
+    // You may need to parse and then convert to your sample array structure
+    localStorage.setItem('footwearSamples', decodedContent);
+    alert('Data loaded from GitHub! Refreshing...');
+    window.location.reload();
+}
+
+document.getElementById('saveToGitHubBtn').onclick = saveToGitHub;
+document.getElementById('loadFromGitHubBtn').onclick = loadFromGitHub;
