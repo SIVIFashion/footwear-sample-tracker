@@ -1765,7 +1765,7 @@ function showImportDialog() {
 // ====================
 
 // Replace with your details:
-const GITHUB_TOKEN = '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'; // Keep private, do not publish
+const GITHUB_TOKEN = 'place_your_token_here'; // Keep private, do not publish
 const GITHUB_USERNAME = 'sivifashion';
 const GITHUB_REPO = 'footwear-sample-tracker';
 const GITHUB_FILEPATH = 'live-samples.json'; // Change if your file is named differently
