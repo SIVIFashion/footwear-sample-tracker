@@ -3,766 +3,2048 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Footwear Sample Tracker</title>
-    <link rel="stylesheet" href="style.css">
-        <script src="https://cdn.jsdelivr.net/npm/exceljs@4.3.0/dist/exceljs.min.js"></script>
+    <title>Footwear Sample Tracker v2.0 - Test Version</title>
+    <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
+    <style>
+        :root {
+            --color-white: rgba(255, 255, 255, 1);
+            --color-cream-50: rgba(252, 252, 249, 1);
+            --color-cream-100: rgba(255, 255, 253, 1);
+            --color-gray-200: rgba(245, 245, 245, 1);
+            --color-gray-300: rgba(167, 169, 169, 1);
+            --color-gray-400: rgba(119, 124, 124, 1);
+            --color-slate-500: rgba(98, 108, 113, 1);
+            --color-brown-600: rgba(94, 82, 64, 1);
+            --color-slate-900: rgba(19, 52, 59, 1);
+            --color-teal-300: rgba(50, 184, 198, 1);
+            --color-teal-500: rgba(33, 128, 141, 1);
+            --color-teal-600: rgba(29, 116, 128, 1);
+            --color-teal-700: rgba(26, 104, 115, 1);
+            --color-red-500: rgba(192, 21, 47, 1);
+            --color-orange-500: rgba(168, 75, 47, 1);
+            --color-brown-600-rgb: 94, 82, 64;
+            --color-teal-500-rgb: 33, 128, 141;
+            --color-slate-900-rgb: 19, 52, 59;
+            --color-background: var(--color-cream-50);
+            --color-surface: var(--color-cream-100);
+            --color-text: var(--color-slate-900);
+            --color-text-secondary: var(--color-slate-500);
+            --color-primary: var(--color-teal-500);
+            --color-primary-hover: var(--color-teal-600);
+            --color-btn-primary-text: var(--color-cream-50);
+            --color-secondary: rgba(var(--color-brown-600-rgb), 0.12);
+            --color-secondary-hover: rgba(var(--color-brown-600-rgb), 0.2);
+            --color-border: rgba(var(--color-brown-600-rgb), 0.2);
+            --color-card-border: rgba(var(--color-brown-600-rgb), 0.12);
+            --color-error: var(--color-red-500);
+            --color-success: var(--color-teal-500);
+            --color-warning: var(--color-orange-500);
+            --color-focus-ring: rgba(var(--color-teal-500-rgb), 0.4);
+            --font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-size-xs: 11px;
+            --font-size-sm: 12px;
+            --font-size-base: 14px;
+            --font-size-lg: 16px;
+            --font-size-xl: 18px;
+            --font-size-2xl: 20px;
+            --font-size-3xl: 24px;
+            --space-4: 4px;
+            --space-8: 8px;
+            --space-12: 12px;
+            --space-16: 16px;
+            --space-20: 20px;
+            --space-24: 24px;
+            --space-32: 32px;
+            --radius-sm: 6px;
+            --radius-base: 8px;
+            --radius-lg: 12px;
+            --radius-full: 9999px;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.04);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.04);
+        }
 
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: var(--font-family-base);
+            font-size: var(--font-size-base);
+            color: var(--color-text);
+            background-color: var(--color-background);
+            line-height: 1.5;
+        }
+
+        .container { min-height: 100vh; }
+
+        /* Header */
+        .header {
+            background: var(--color-surface);
+            border-bottom: 1px solid var(--color-border);
+            padding: var(--space-16) var(--space-24);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1600px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+            gap: var(--space-12);
+        }
+
+        .header h1 {
+            font-size: var(--font-size-3xl);
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        .header-right {
+            display: flex;
+            gap: var(--space-12);
+            align-items: center;
+        }
+
+        .user-display {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+        }
+
+        .user-display input {
+            padding: var(--space-4) var(--space-8);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            font-size: var(--font-size-sm);
+        }
+
+        .view-toggle {
+            padding: var(--space-8) var(--space-16);
+            background: var(--color-primary);
+            color: var(--color-btn-primary-text);
+            border: none;
+            border-radius: var(--radius-base);
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .view-toggle:hover { background: var(--color-primary-hover); }
+
+        /* Controls */
+        .controls-bar {
+            background: var(--color-surface);
+            padding: var(--space-16) var(--space-24);
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .search-filter {
+            display: flex;
+            gap: var(--space-12);
+            margin-bottom: var(--space-16);
+            flex-wrap: wrap;
+        }
+
+        .search-input, .filter-select {
+            padding: var(--space-8) var(--space-12);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-base);
+            font-size: var(--font-size-base);
+            min-width: 200px;
+        }
+
+        .search-input:focus, .filter-select:focus {
+            outline: 2px solid var(--color-primary);
+            border-color: var(--color-primary);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: var(--space-8);
+            flex-wrap: wrap;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: var(--space-8) var(--space-16);
+            border: none;
+            border-radius: var(--radius-base);
+            font-size: var(--font-size-base);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--color-primary);
+            color: var(--color-btn-primary-text);
+        }
+
+        .btn-primary:hover { background: var(--color-primary-hover); }
+
+        .btn-secondary {
+            background: var(--color-secondary);
+            color: var(--color-text);
+        }
+
+        .btn-secondary:hover { background: var(--color-secondary-hover); }
+
+        .btn-success {
+            background: var(--color-success);
+            color: var(--color-btn-primary-text);
+        }
+
+        .btn-info {
+            background: var(--color-teal-300);
+            color: var(--color-slate-900);
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: var(--space-24);
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .view-container { display: none; }
+        .view-container.active { display: block; }
+
+        /* Dashboard Grid */
+        .samples-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: var(--space-24);
+        }
+
+        .sample-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-card-border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.25s;
+            cursor: pointer;
+        }
+
+        .sample-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .sample-card-image {
+            width: 100%;
+            height: 200px;
+            background: var(--color-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-text-secondary);
+            font-size: var(--font-size-sm);
+        }
+
+        .sample-card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .sample-card-body { padding: var(--space-16); }
+
+        .sample-card-title {
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+            margin-bottom: var(--space-4);
+        }
+
+        .sample-card-id {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+            margin-bottom: var(--space-12);
+        }
+
+        .sample-card-meta {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-8);
+            margin-bottom: var(--space-12);
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+        }
+
+        .sample-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: var(--space-12);
+            border-top: 1px solid var(--color-card-border);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: var(--space-4) var(--space-12);
+            border-radius: var(--radius-full);
+            font-size: var(--font-size-xs);
+            font-weight: 500;
+        }
+
+        .status-badge.material { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+        .status-badge.development { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+        .status-badge.quality-check { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+        .status-badge.ready-to-ship { background: rgba(34, 197, 94, 0.15); color: #22c55e; }
+        .status-badge.delivered { background: rgba(var(--color-teal-500-rgb), 0.15); color: var(--color-success); }
+
+        /* List View */
+        .samples-table {
+            width: 100%;
+            background: var(--color-surface);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--color-card-border);
+            border-collapse: collapse;
+            overflow: hidden;
+        }
+
+        .samples-table th {
+            background: var(--color-secondary);
+            padding: var(--space-12) var(--space-16);
+            text-align: left;
+            font-weight: 600;
+            font-size: var(--font-size-sm);
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .samples-table td {
+            padding: var(--space-12) var(--space-16);
+            border-bottom: 1px solid var(--color-card-border);
+            font-size: var(--font-size-sm);
+        }
+
+        .samples-table tr:hover { background: var(--color-secondary); }
+
+        .action-btn {
+            padding: var(--space-4) var(--space-8);
+            margin: 0 var(--space-4);
+            border: none;
+            border-radius: var(--radius-sm);
+            background: var(--color-primary);
+            color: var(--color-btn-primary-text);
+            cursor: pointer;
+            font-size: var(--font-size-xs);
+        }
+
+        .action-btn:hover { opacity: 0.9; }
+        .action-btn.delete { background: var(--color-error); }
+
+        /* Kanban */
+        .kanban-board {
+            display: flex;
+            gap: var(--space-16);
+            overflow-x: auto;
+        }
+
+        .kanban-column {
+            flex: 1;
+            min-width: 280px;
+            background: var(--color-surface);
+            border: 1px solid var(--color-card-border);
+            border-radius: var(--radius-lg);
+        }
+
+        .kanban-column h3 {
+            padding: var(--space-16);
+            background: var(--color-secondary);
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .kanban-lane {
+            padding: var(--space-12);
+            min-height: 400px;
+        }
+
+        .kanban-card {
+            background: var(--color-background);
+            border: 1px solid var(--color-card-border);
+            border-radius: var(--radius-base);
+            padding: var(--space-12);
+            margin-bottom: var(--space-12);
+            cursor: grab;
+            transition: all 0.15s;
+        }
+
+        .kanban-card:hover { box-shadow: var(--shadow-md); }
+        .kanban-card.dragging { opacity: 0.5; cursor: grabbing; }
+
+        .kanban-card-title {
+            font-weight: 600;
+            margin-bottom: var(--space-4);
+        }
+
+        .kanban-card-id, .kanban-card-client {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-16);
+        }
+
+        .modal.show { display: flex; }
+
+        .modal-content {
+            background: var(--color-surface);
+            border-radius: var(--radius-lg);
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: var(--space-24);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .form-section {
+            margin-bottom: var(--space-24);
+            padding-bottom: var(--space-16);
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .form-section:last-of-type {
+            border-bottom: none;
+        }
+
+        .form-section h3 {
+            font-size: var(--font-size-xl);
+            margin-bottom: var(--space-16);
+            color: var(--color-text);
+            font-weight: 600;
+        }
+
+        .material-section {
+            margin-bottom: var(--space-16);
+            padding: var(--space-16);
+            background: var(--color-secondary);
+            border-radius: var(--radius-base);
+        }
+
+        .material-section h4 {
+            font-size: var(--font-size-base);
+            margin-bottom: var(--space-12);
+            color: var(--color-text);
+            font-weight: 600;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-12);
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .modal-close {
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: var(--color-text-secondary);
+            background: none;
+            border: none;
+            line-height: 1;
+        }
+
+        .modal-close:hover { color: var(--color-text); }
+
+        .modal h2 {
+            margin-bottom: var(--space-20);
+            font-size: var(--font-size-2xl);
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: var(--space-16);
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: var(--space-8);
+            font-weight: 500;
+            font-size: var(--font-size-sm);
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: var(--space-8) var(--space-12);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-base);
+            font-size: var(--font-size-base);
+            font-family: var(--font-family-base);
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: 2px solid var(--color-primary);
+            border-color: var(--color-primary);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-12);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: var(--space-8) var(--space-12);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-base);
+            font-size: var(--font-size-base);
+            font-family: var(--font-family-base);
+            background: var(--color-surface);
+            color: var(--color-text);
+        }
+
+        .form-control:focus {
+            outline: 2px solid var(--color-primary);
+            border-color: var(--color-primary);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: var(--space-12);
+            margin-top: var(--space-20);
+        }
+
+        .photo-preview {
+            display: flex;
+            gap: var(--space-12);
+            flex-wrap: wrap;
+            margin-top: var(--space-12);
+        }
+
+        .photo-preview-item {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            border-radius: var(--radius-base);
+            overflow: hidden;
+            border: 1px solid var(--color-border);
+        }
+
+        .photo-preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-preview-remove {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: var(--color-error);
+            color: white;
+            border: none;
+            border-radius: var(--radius-full);
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        /* Loading */
+        .loading-indicator {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            z-index: 4000;
+        }
+
+        .loading-indicator.show { display: flex; }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-indicator p {
+            color: white;
+            margin-top: var(--space-16);
+            font-size: var(--font-size-lg);
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--color-surface);
+            padding: var(--space-16);
+            border-radius: var(--radius-base);
+            box-shadow: var(--shadow-lg);
+            z-index: 5000;
+            display: none;
+            min-width: 300px;
+            border-left: 4px solid var(--color-success);
+        }
+
+        .toast.show { display: block; animation: slideIn 0.3s; }
+        .toast.error { border-left-color: var(--color-error); }
+        .toast.warning { border-left-color: var(--color-warning); }
+
+        @keyframes slideIn {
+            from { transform: translateX(400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .samples-grid { grid-template-columns: 1fr; }
+            .form-row { grid-template-columns: 1fr; }
+            .action-buttons { flex-direction: column; }
+            .search-filter { flex-direction: column; }
+            .kanban-board { flex-direction: column; }
+        }
+    </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <div class="container">
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
             <div class="header-content">
-                <div class="logo">
-                    <h1>👟 Sample Tracker</h1>
+                <h1>👟 Footwear Sample Tracker v2.0</h1>
+                <div class="header-right">
+                    <span id="userDisplay" class="user-display">User: <input type="text" id="userName" placeholder="Your name" maxlength="20"></span>
+                    <button id="viewToggle" class="view-toggle" onclick="toggleView()">📊 Dashboard</button>
                 </div>
-               
-                <div class="data-management-buttons" style="display: flex; gap: 10px; margin: 10px 0;">
-                    <button onclick="exportAllData()" style="padding: 10px 20px; background: #3b82f6; color: white; border: none; border-radius: 5px; cursor: pointer;">
-                        💾 Export All Data
-                    </button>
-                    <button onclick="showImportDialog()" style="padding: 10px 20px; background: #8b5cf6; color: white; border: none; border-radius: 5px; cursor: pointer;">
-                        📥 Import Data
-                    </button>
-                    <button onclick="exportToExcel()" style="padding: 10px 20px; background: #10b981; color: white; border: none; border-radius: 5px; cursor: pointer;">
-                    📊 Export Excel (with Images)
-                    </button>
+            </div>
+        </header>
 
-                    <button id="saveToGitHubBtn">💾 Save to GitHub</button>
-                    <button id="loadFromGitHubBtn">⬇️ Load from GitHub</button>
-                </div>
-
-                <nav class="nav">
-                    <button class="nav-btn active" data-view="dashboard">Dashboard</button>
-                    <button class="nav-btn" data-view="add-sample">Add Sample</button>
-                    <button class="nav-btn" data-view="list">All Samples</button>
-                    <button class="nav-btn" data-view="kanban">Kanban</button>
-                </nav>
+        <!-- Controls -->
+        <div class="controls-bar">
+            <div class="search-filter">
+                <input type="text" id="searchInput" placeholder="🔍 Search samples..." class="search-input" oninput="filterSamples()">
+                <select id="stageFilter" class="filter-select" onchange="filterSamples()">
+                    <option value="">All Stages</option>
+                    <option value="Material">Material</option>
+                    <option value="Development">Development</option>
+                    <option value="Quality Check">Quality Check</option>
+                    <option value="Ready to Ship">Ready to Ship</option>
+                    <option value="Delivered">Delivered</option>
+                </select>
+            </div>
+            <div class="action-buttons">
+                <button class="btn btn-primary" onclick="openAddSampleModal()">➕ Add Sample</button>
+                <button class="btn btn-secondary" onclick="exportJSON()">💾 Export JSON</button>
+                <button class="btn btn-secondary" onclick="importJSON()">📥 Import JSON</button>
+                <button class="btn btn-secondary" onclick="exportToExcel()">📊 Export Excel</button>
+                <button class="btn btn-success" onclick="saveToGitHub()">☁️ Save to GitHub</button>
+                <button class="btn btn-info" onclick="loadFromGitHub()">⬇️ Load from GitHub</button>
             </div>
         </div>
-    </header>
 
-    <!-- Main Content -->
-    <main class="main-content">
-        <div class="container">
+        <!-- Main Content -->
+        <main class="main-content">
             <!-- Dashboard View -->
-            <div id="dashboard-view" class="view active">
-                <div class="view-header">
-                    <h2>Sample Dashboard</h2>
-                    <div class="dashboard-filters">
-                        <select id="dashboard-client-filter" class="form-control filter-select">
-                            <option value="">All Clients</option>
-                        </select>
-                        <button class="btn btn--outline" onclick="exportFilteredSamples('dashboard')">Export Filtered</button>
+            <div id="dashboardView" class="view-container active">
+                <div id="samplesGrid" class="samples-grid"></div>
+            </div>
+
+            <!-- List View -->
+            <div id="listView" class="view-container">
+                <table class="samples-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Sample Name</th>
+                            <th>Client</th>
+                            <th>Date Received</th>
+                            <th>Current Stage</th>
+                            <th>Photos</th>
+                            <th>Last Edited</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+
+            <!-- Kanban View -->
+            <div id="kanbanView" class="view-container">
+                <div class="kanban-board">
+                    <div class="kanban-column">
+                        <h3>Material</h3>
+                        <div class="kanban-lane" data-stage="Material"></div>
                     </div>
-                </div>
-                
-                <div class="stats-summary">
-                    <div class="stat-item">
-                        <span class="stat-number" id="total-samples">0</span>
-                        <span class="stat-label">Total Samples</span>
+                    <div class="kanban-column">
+                        <h3>Development</h3>
+                        <div class="kanban-lane" data-stage="Development"></div>
                     </div>
-                    <div class="stat-item">
-                        <span class="stat-number" id="ready-samples">0</span>
-                        <span class="stat-label">Ready to Ship</span>
+                    <div class="kanban-column">
+                        <h3>Quality Check</h3>
+                        <div class="kanban-lane" data-stage="Quality Check"></div>
                     </div>
-                    <div class="stat-item">
-                        <span class="stat-number" id="in-progress-samples">0</span>
-                        <span class="stat-label">In Progress</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number" id="material-completion">0%</span>
-                        <span class="stat-label">Material Completion</span>
-                    </div>
-                </div>
-                
-                <div class="dashboard-grid">
-                    <div class="stage-section">
-                        <h3>Material Stage</h3>
-                        <div id="material-stage-samples" class="sample-cards"></div>
-                    </div>
-                    <div class="stage-section">
-                        <h3>Development Stage</h3>
-                        <div id="development-stage-samples" class="sample-cards"></div>
-                    </div>
-                    <div class="stage-section">
-                        <h3>Final Stage</h3>
-                        <div id="final-stage-samples" class="sample-cards"></div>
-                    </div>
-                    <div class="stage-section">
+                    <div class="kanban-column">
                         <h3>Ready to Ship</h3>
-                        <div id="ready-stage-samples" class="sample-cards"></div>
+                        <div class="kanban-lane" data-stage="Ready to Ship"></div>
+                    </div>
+                    <div class="kanban-column">
+                        <h3>Delivered</h3>
+                        <div class="kanban-lane" data-stage="Delivered"></div>
                     </div>
                 </div>
             </div>
+        </main>
 
-            <!-- Add Sample View -->
-            <div id="add-sample-view" class="view">
-                <div class="view-header">
-                    <h2>Add New Sample</h2>
-                </div>
+        <!-- Hidden File Inputs -->
+        <input type="file" id="photoInput" accept="image/*" multiple style="display:none;" onchange="handlePhotoUpload(event)">
+        <input type="file" id="importInput" accept=".json" style="display:none;" onchange="handleImport(event)">
+
+        <!-- Add/Edit Modal -->
+        <div id="sampleModal" class="modal">
+            <div class="modal-content">
+                <span class="modal-close" onclick="closeModal()">&times;</span>
+                <h2 id="modalTitle">Add New Sample</h2>
                 
-                <form id="add-sample-form" class="add-sample-form">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label class="form-label" for="sample-name">Sample Name *</label>
-                            <input type="text" id="sample-name" class="form-control" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label" for="client-name">Client Name *</label>
-                            <input type="text" id="client-name" class="form-control" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label" for="date-received">Date Received *</label>
-                            <input type="date" id="date-received" class="form-control" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label" for="initial-stage">Initial Stage *</label>
-                            <select id="initial-stage" class="form-control" required>
-                                <option value="Material">Material Stage</option>
-                                <option value="Development">Development Stage</option>
-                                <option value="Final">Final Stage</option>
-                            </select>
-                        </div>
+                <form id="sampleForm" onsubmit="saveSample(event)">
+                    <div class="form-group">
+                        <label>Sample Name:</label>
+                        <input type="text" id="sampleName" required>
+                    </div>
 
+                    <div class="form-row">
                         <div class="form-group">
-                            <label class="form-label" for="created-by">Created By *</label>
-                            <input type="text" id="created-by" class="form-control" placeholder="Your name" required>
+                            <label>Client:</label>
+                            <input type="text" id="client" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Date Received:</label>
+                            <input type="date" id="dateReceived" required>
                         </div>
                     </div>
-                    
-                    <!-- Enhanced Material Details Section -->
-                    <div class="material-details-section">
+
+                    <div class="form-group">
+                        <label>Current Stage:</label>
+                        <select id="currentStage">
+                            <option value="Material">Material</option>
+                            <option value="Development">Development</option>
+                            <option value="Quality Check">Quality Check</option>
+                            <option value="Ready to Ship">Ready to Ship</option>
+                            <option value="Delivered">Delivered</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Notes:</label>
+                        <textarea id="notes" rows="4"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Photos:</label>
+                        <button type="button" class="btn btn-secondary" onclick="document.getElementById('photoInput').click()">📸 Add Photos</button>
+                        <div id="photoPreview" class="photo-preview"></div>
+                    </div>
+
+                    <!-- Material Details Section -->
+                    <div class="form-section">
                         <h3>Material Details</h3>
-                        <div class="material-subsections">
-                            <div class="material-subsection">
-                                <h4>Upper Material</h4>
-                                <div class="form-grid">
-                                    <div class="form-group">
-                                        <label class="form-label" for="upper-vendor">Vendor</label>
-                                        <input type="text" id="upper-vendor" class="form-control">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label" for="upper-stage">Stage</label>
-                                        <select id="upper-stage" class="form-control">
-                                            <option value="Not Started">Not Started</option>
-                                            <option value="Sourcing">Sourcing</option>
-                                            <option value="Ordered">Ordered</option>
-                                            <option value="Delivered">Delivered</option>
-                                            <option value="Quality Check">Quality Check</option>
-                                            <option value="Approved">Approved</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label" for="upper-delivery-date">Delivery Date</label>
-                                        <input type="date" id="upper-delivery-date" class="form-control">
-                                    </div>
-                                    <div class="form-group form-group--full">
-                                        <label class="form-label" for="upper-notes">Notes</label>
-                                        <input type="text" id="upper-notes" class="form-control">
-                                    </div>
+                        
+                        <div class="material-section">
+                            <h4>Upper Material</h4>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Vendor:</label>
+                                    <input type="text" id="upperVendor" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label>Stage:</label>
+                                    <select id="upperStage" class="form-control">
+                                        <option value="">Not Started</option>
+                                        <option value="Ordered">Ordered</option>
+                                        <option value="In Transit">In Transit</option>
+                                        <option value="Delivered">Delivered</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Delivery Date:</label>
+                                    <input type="date" id="upperDeliveryDate" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label>Remarks:</label>
+                                    <input type="text" id="upperRemarks" class="form-control">
                                 </div>
                             </div>
-                            
-                            <div class="material-subsection">
-                                <h4>Last</h4>
-                                <div class="form-grid">
-                                    <div class="form-group">
-                                        <label class="form-label" for="last-vendor">Vendor</label>
-                                        <input type="text" id="last-vendor" class="form-control">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label" for="last-stage">Stage</label>
-                                        <select id="last-stage" class="form-control">
-                                            <option value="Not Started">Not Started</option>
-                                            <option value="Sourcing">Sourcing</option>
-                                            <option value="Ordered">Ordered</option>
-                                            <option value="Delivered">Delivered</option>
-                                            <option value="Quality Check">Quality Check</option>
-                                            <option value="Approved">Approved</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label" for="last-delivery-date">Delivery Date</label>
-                                        <input type="date" id="last-delivery-date" class="form-control">
-                                    </div>
-                                    <div class="form-group form-group--full">
-                                        <label class="form-label" for="last-notes">Notes</label>
-                                        <input type="text" id="last-notes" class="form-control">
-                                    </div>
+                        </div>
+
+                        <div class="material-section">
+                            <h4>Last</h4>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Vendor:</label>
+                                    <input type="text" id="lastVendor" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label>Stage:</label>
+                                    <select id="lastStage" class="form-control">
+                                        <option value="">Not Started</option>
+                                        <option value="Ordered">Ordered</option>
+                                        <option value="In Transit">In Transit</option>
+                                        <option value="Delivered">Delivered</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Delivery Date:</label>
+                                    <input type="date" id="lastDeliveryDate" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label>Remarks:</label>
+                                    <input type="text" id="lastRemarks" class="form-control">
                                 </div>
                             </div>
-                            
-                            <div class="material-subsection">
-                                <h4>Sole</h4>
-                                <div class="form-grid">
-                                    <div class="form-group">
-                                        <label class="form-label" for="sole-vendor">Vendor</label>
-                                        <input type="text" id="sole-vendor" class="form-control">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label" for="sole-stage">Stage</label>
-                                        <select id="sole-stage" class="form-control">
-                                            <option value="Not Started">Not Started</option>
-                                            <option value="Sourcing">Sourcing</option>
-                                            <option value="Ordered">Ordered</option>
-                                            <option value="Delivered">Delivered</option>
-                                            <option value="Quality Check">Quality Check</option>
-                                            <option value="Approved">Approved</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label" for="sole-delivery-date">Delivery Date</label>
-                                        <input type="date" id="sole-delivery-date" class="form-control">
-                                    </div>
-                                    <div class="form-group form-group--full">
-                                        <label class="form-label" for="sole-notes">Notes</label>
-                                        <input type="text" id="sole-notes" class="form-control">
-                                    </div>
+                        </div>
+
+                        <div class="material-section">
+                            <h4>Sole</h4>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Vendor:</label>
+                                    <input type="text" id="soleVendor" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label>Stage:</label>
+                                    <select id="soleStage" class="form-control">
+                                        <option value="">Not Started</option>
+                                        <option value="Ordered">Ordered</option>
+                                        <option value="In Transit">In Transit</option>
+                                        <option value="Delivered">Delivered</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Delivery Date:</label>
+                                    <input type="date" id="soleDeliveryDate" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label>Remarks:</label>
+                                    <input type="text" id="soleRemarks" class="form-control">
                                 </div>
                             </div>
-                            
-                            <div class="material-subsection">
-                                <h4>Other Material 1</h4>
-                                <div class="form-grid">
-                                    <div class="form-group">
-                                        <label class="form-label" for="other1-name">Material Name</label>
-                                        <input type="text" id="other1-name" class="form-control">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label" for="other1-vendor">Vendor</label>
-                                        <input type="text" id="other1-vendor" class="form-control">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label" for="other1-stage">Stage</label>
-                                        <select id="other1-stage" class="form-control">
-                                            <option value="Not Started">Not Started</option>
-                                            <option value="Sourcing">Sourcing</option>
-                                            <option value="Ordered">Ordered</option>
-                                            <option value="Delivered">Delivered</option>
-                                            <option value="Quality Check">Quality Check</option>
-                                            <option value="Approved">Approved</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label" for="other1-delivery-date">Delivery Date</label>
-                                        <input type="date" id="other1-delivery-date" class="form-control">
-                                    </div>
-                                    <div class="form-group form-group--full">
-                                        <label class="form-label" for="other1-notes">Notes</label>
-                                        <input type="text" id="other1-notes" class="form-control">
-                                    </div>
+                        </div>
+
+                        <div class="material-section">
+                            <h4>Other Material 1</h4>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Material Name:</label>
+                                    <input type="text" id="other1Name" class="form-control" placeholder="e.g., Thread, Hardware">
+                                </div>
+                                <div class="form-group">
+                                    <label>Vendor:</label>
+                                    <input type="text" id="other1Vendor" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label>Stage:</label>
+                                    <select id="other1Stage" class="form-control">
+                                        <option value="">Not Started</option>
+                                        <option value="Ordered">Ordered</option>
+                                        <option value="In Transit">In Transit</option>
+                                        <option value="Delivered">Delivered</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Delivery Date:</label>
+                                    <input type="date" id="other1DeliveryDate" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label>Remarks:</label>
+                                    <input type="text" id="other1Remarks" class="form-control">
                                 </div>
                             </div>
-                            
-                            <div class="material-subsection">
-                                <h4>Other Material 2</h4>
-                                <div class="form-grid">
-                                    <div class="form-group">
-                                        <label class="form-label" for="other2-name">Material Name</label>
-                                        <input type="text" id="other2-name" class="form-control">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label" for="other2-vendor">Vendor</label>
-                                        <input type="text" id="other2-vendor" class="form-control">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label" for="other2-stage">Stage</label>
-                                        <select id="other2-stage" class="form-control">
-                                            <option value="Not Started">Not Started</option>
-                                            <option value="Sourcing">Sourcing</option>
-                                            <option value="Ordered">Ordered</option>
-                                            <option value="Delivered">Delivered</option>
-                                            <option value="Quality Check">Quality Check</option>
-                                            <option value="Approved">Approved</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label" for="other2-delivery-date">Delivery Date</label>
-                                        <input type="date" id="other2-delivery-date" class="form-control">
-                                    </div>
-                                    <div class="form-group form-group--full">
-                                        <label class="form-label" for="other2-notes">Notes</label>
-                                        <input type="text" id="other2-notes" class="form-control">
-                                    </div>
+                        </div>
+
+                        <div class="material-section">
+                            <h4>Other Material 2</h4>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Material Name:</label>
+                                    <input type="text" id="other2Name" class="form-control" placeholder="e.g., Thread, Hardware">
+                                </div>
+                                <div class="form-group">
+                                    <label>Vendor:</label>
+                                    <input type="text" id="other2Vendor" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label>Stage:</label>
+                                    <select id="other2Stage" class="form-control">
+                                        <option value="">Not Started</option>
+                                        <option value="Ordered">Ordered</option>
+                                        <option value="In Transit">In Transit</option>
+                                        <option value="Delivered">Delivered</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Delivery Date:</label>
+                                    <input type="date" id="other2DeliveryDate" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label>Remarks:</label>
+                                    <input type="text" id="other2Remarks" class="form-control">
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Development Stages Section -->
-                    <div class="development-stages-section">
+                    <div class="form-section">
                         <h3>Development Stages</h3>
-                        <div class="development-subsections">
-                            <div class="development-subsection">
-                                <h4>Pattern Trial</h4>
-                                <div class="form-grid">
-                                    <div class="form-group">
-                                        <label class="form-label" for="pattern-delivery-date">Delivery Date</label>
-                                        <input type="date" id="pattern-delivery-date" class="form-control">
-                                    </div>
-                                    <div class="form-group form-group--full">
-                                        <label class="form-label" for="pattern-notes">Notes</label>
-                                        <input type="text" id="pattern-notes" class="form-control">
-                                    </div>
-                                </div>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Pattern Trial Status:</label>
+                                <select id="patternStatus" class="form-control">
+                                    <option value="">Not Started</option>
+                                    <option value="In Progress">In Progress</option>
+                                    <option value="Completed">Completed</option>
+                                </select>
                             </div>
-
-                            <div class="development-subsection">
-                                <h4>Upper Ready</h4>
-                                <div class="form-grid">
-                                    <div class="form-group">
-                                        <label class="form-label" for="upper-ready-delivery-date">Delivery Date</label>
-                                        <input type="date" id="upper-ready-delivery-date" class="form-control">
-                                    </div>
-                                    <div class="form-group form-group--full">
-                                        <label class="form-label" for="upper-ready-notes">Notes</label>
-                                        <input type="text" id="upper-ready-notes" class="form-control">
-                                    </div>
-                                </div>
+                            <div class="form-group">
+                                <label>Pattern Trial Date:</label>
+                                <input type="date" id="patternDate" class="form-control">
                             </div>
-
-                            <div class="development-subsection">
-                                <h4>Sole Ready</h4>
-                                <div class="form-grid">
-                                    <div class="form-group">
-                                        <label class="form-label" for="sole-ready-delivery-date">Delivery Date</label>
-                                        <input type="date" id="sole-ready-delivery-date" class="form-control">
-                                    </div>
-                                    <div class="form-group form-group--full">
-                                        <label class="form-label" for="sole-ready-notes">Notes</label>
-                                        <input type="text" id="sole-ready-notes" class="form-control">
-                                    </div>
-                                </div>
+                            <div class="form-group">
+                                <label>Pattern Trial Remarks:</label>
+                                <input type="text" id="patternRemarks" class="form-control">
                             </div>
+                        </div>
 
-                            <div class="development-subsection">
-                                <h4>Assembly</h4>
-                                <div class="form-grid">
-                                    <div class="form-group">
-                                        <label class="form-label" for="assembly-delivery-date">Delivery Date</label>
-                                        <input type="date" id="assembly-delivery-date" class="form-control">
-                                    </div>
-                                    <div class="form-group form-group--full">
-                                        <label class="form-label" for="assembly-notes">Notes</label>
-                                        <input type="text" id="assembly-notes" class="form-control">
-                                    </div>
-                                </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Upper Ready Status:</label>
+                                <select id="upperReadyStatus" class="form-control">
+                                    <option value="">Not Started</option>
+                                    <option value="In Progress">In Progress</option>
+                                    <option value="Completed">Completed</option>
+                                </select>
                             </div>
+                            <div class="form-group">
+                                <label>Upper Ready Date:</label>
+                                <input type="date" id="upperReadyDate" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>Upper Ready Remarks:</label>
+                                <input type="text" id="upperReadyRemarks" class="form-control">
+                            </div>
+                        </div>
 
-                            <div class="development-subsection">
-                                <h4>Quality Check</h4>
-                                <div class="form-grid">
-                                    <div class="form-group">
-                                        <label class="form-label" for="quality-delivery-date">Delivery Date</label>
-                                        <input type="date" id="quality-delivery-date" class="form-control">
-                                    </div>
-                                    <div class="form-group form-group--full">
-                                        <label class="form-label" for="quality-notes">Notes</label>
-                                        <input type="text" id="quality-notes" class="form-control">
-                                    </div>
-                                </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Sole Ready Status:</label>
+                                <select id="soleReadyStatus" class="form-control">
+                                    <option value="">Not Started</option>
+                                    <option value="In Progress">In Progress</option>
+                                    <option value="Completed">Completed</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Sole Ready Date:</label>
+                                <input type="date" id="soleReadyDate" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>Sole Ready Remarks:</label>
+                                <input type="text" id="soleReadyRemarks" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Assembly Status:</label>
+                                <select id="assemblyStatus" class="form-control">
+                                    <option value="">Not Started</option>
+                                    <option value="In Progress">In Progress</option>
+                                    <option value="Completed">Completed</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Assembly Date:</label>
+                                <input type="date" id="assemblyDate" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>Assembly Remarks:</label>
+                                <input type="text" id="assemblyRemarks" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Quality Check Status:</label>
+                                <select id="qualityStatus" class="form-control">
+                                    <option value="">Not Started</option>
+                                    <option value="In Progress">In Progress</option>
+                                    <option value="Completed">Completed</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Quality Check Date:</label>
+                                <input type="date" id="qualityDate" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>Quality Check Remarks:</label>
+                                <input type="text" id="qualityRemarks" class="form-control">
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" for="sample-photos">Photos</label>
-                        <div class="photo-upload-container">
-                            <input type="file" id="sample-photos" class="form-control" multiple accept="image/*">
-                            <button type="button" id="camera-button" class="btn btn--outline camera-btn" style="display: none;">
-                                📷 Take Photo
-                            </button>
-                            <input type="file" id="camera-input" accept="image/*" capture="environment" style="display: none;">
-                        </div>
-                        <div id="photo-preview" class="photo-preview-container"></div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" for="initial-notes">Initial Notes</label>
-                        <textarea id="initial-notes" class="form-control" rows="3"></textarea>
-                    </div>
-                    
+
                     <div class="form-actions">
-                        <button type="submit" class="btn btn--primary">Add Sample</button>
-                        <button type="button" class="btn btn--secondary" onclick="clearForm()">Clear</button>
+                        <button type="submit" class="btn btn-primary">✅ Save Sample</button>
+                        <button type="button" class="btn btn-secondary" onclick="closeModal()">❌ Cancel</button>
                     </div>
                 </form>
             </div>
-
-            <!-- List View - Excel-like Table -->
-            <div id="list-view" class="view">
-                <div class="view-header">
-                    <h2>All Samples - Complete Overview</h2>
-                    <div class="list-controls">
-                        <input type="text" id="search-input" class="form-control search-input" placeholder="Search samples...">
-                        <select id="filter-stage" class="form-control filter-select">
-                            <option value="">All Stages</option>
-                            <option value="Material">Material Stage</option>
-                            <option value="Development">Development Stage</option>
-                            <option value="Final">Final Stage</option>
-                            <option value="Ready to Ship">Ready to Ship</option>
-                        </select>
-                        <select id="list-client-filter" class="form-control filter-select">
-                            <option value="">All Clients</option>
-                        </select>
-                        <button class="btn btn--outline" onclick="exportFilteredSamples('list')">Export Excel</button>
-                    </div>
-                </div>
-                
-                <div class="excel-table-container">
-                    <div class="table-scroll-wrapper">
-                        <table id="excel-samples-table" class="excel-table">
-                            <thead>
-                                <tr>
-                                    <th class="sticky-col">Sample ID</th>
-                                    <th class="sticky-col-2">Name</th>
-                                    <th>Client</th>
-                                    <th>Date Received</th>
-                                    <th>Current Stage</th>
-                                    <th>Status</th>
-                                    <th>Photo</th>
-                                    <th colspan="4">Material Details</th>
-                                    <th colspan="5">Development Stages</th>
-                                    <th>Last Edited By</th>
-                                    <th>Last Edited</th>
-                                    <th>Actions</th>
-                                </tr>
-                                <tr class="sub-header">
-                                    <th class="sticky-col"></th>
-                                    <th class="sticky-col-2"></th>
-                                    <th></th>
-                                    <th></th>
-                                    <th></th>
-                                    <th></th>
-                                    <th></th>
-                                    <th>Upper Material</th>
-                                    <th>Last</th>
-                                    <th>Sole</th>
-                                    <th>Other Materials</th>
-                                    <th>Pattern Trial</th>
-                                    <th>Upper Ready</th>
-                                    <th>Sole Ready</th>
-                                    <th>Assembly</th>
-                                    <th>Quality Check</th>
-                                    <th></th>
-                                    <th></th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody id="excel-table-body">
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Kanban View -->
-            <div id="kanban-view" class="view">
-                <div class="view-header">
-                    <h2>Kanban Board</h2>
-                </div>
-                
-                <div class="kanban-board">
-                    <div class="kanban-column">
-                        <h3>Material Stage</h3>
-                        <div id="kanban-material" class="kanban-cards" data-stage="Material"></div>
-                    </div>
-                    <div class="kanban-column">
-                        <h3>Development Stage</h3>
-                        <div id="kanban-development" class="kanban-cards" data-stage="Development"></div>
-                    </div>
-                    <div class="kanban-column">
-                        <h3>Final Stage</h3>
-                        <div id="kanban-final" class="kanban-cards" data-stage="Final"></div>
-                    </div>
-                    <div class="kanban-column">
-                        <h3>Ready to Ship</h3>
-                        <div id="kanban-ready" class="kanban-cards" data-stage="Ready to Ship"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Sample Detail Modal -->
-            <div id="sample-detail-modal" class="modal hidden">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3 id="modal-sample-title">Sample Details</h3>
-                        <button class="modal-close" onclick="closeSampleModal()">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="sample-detail-tabs">
-                            <button class="tab-btn active" data-tab="general">General</button>
-                            <button class="tab-btn" data-tab="materials">Materials</button>
-                            <button class="tab-btn" data-tab="development">Development</button>
-                            <button class="tab-btn" data-tab="photos">Photos</button>
-                            <button class="tab-btn" data-tab="history">History</button>
-                        </div>
-                        
-                        <div class="tab-content">
-                            <!-- General Tab -->
-                            <div id="general-tab" class="tab-panel active">
-                                <div class="sample-basic-info">
-                                    <h4 id="detail-sample-name"></h4>
-                                    <div class="info-grid">
-                                        <p><strong>ID:</strong> <span id="detail-sample-id"></span></p>
-                                        <p><strong>Client:</strong> <span id="detail-client"></span></p>
-                                        <p><strong>Date Received:</strong> <span id="detail-date"></span></p>
-                                        <p><strong>Last Updated:</strong> <span id="detail-last-updated"></span></p>
-                                        <p><strong>Last Edited By:</strong> <span id="detail-last-edited-by"></span></p>
-                                        <p><strong>Current Stage:</strong> <span id="detail-current-stage"></span></p>
-                                    </div>
-                                </div>
-                                
-                                <div class="notes-section">
-                                    <h5>Notes</h5>
-                                    <textarea id="detail-notes" class="form-control" rows="4"></textarea>
-                                </div>
-                            </div>
-                            
-                            <!-- Materials Tab -->
-                            <div id="materials-tab" class="tab-panel">
-                                <div class="material-details-edit">
-                                    <div class="material-section">
-                                        <h5>Upper Material</h5>
-                                        <div class="material-inputs-detailed">
-                                            <input type="text" id="edit-upper-vendor" class="form-control" placeholder="Vendor">
-                                            <select id="edit-upper-stage" class="form-control">
-                                                <option value="Not Started">Not Started</option>
-                                                <option value="Sourcing">Sourcing</option>
-                                                <option value="Ordered">Ordered</option>
-                                                <option value="Delivered">Delivered</option>
-                                                <option value="Quality Check">Quality Check</option>
-                                                <option value="Approved">Approved</option>
-                                            </select>
-                                            <input type="date" id="edit-upper-delivery-date" class="form-control" placeholder="Delivery Date">
-                                            <input type="text" id="edit-upper-notes" class="form-control" placeholder="Notes">
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="material-section">
-                                        <h5>Last</h5>
-                                        <div class="material-inputs-detailed">
-                                            <input type="text" id="edit-last-vendor" class="form-control" placeholder="Vendor">
-                                            <select id="edit-last-stage" class="form-control">
-                                                <option value="Not Started">Not Started</option>
-                                                <option value="Sourcing">Sourcing</option>
-                                                <option value="Ordered">Ordered</option>
-                                                <option value="Delivered">Delivered</option>
-                                                <option value="Quality Check">Quality Check</option>
-                                                <option value="Approved">Approved</option>
-                                            </select>
-                                            <input type="date" id="edit-last-delivery-date" class="form-control" placeholder="Delivery Date">
-                                            <input type="text" id="edit-last-notes" class="form-control" placeholder="Notes">
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="material-section">
-                                        <h5>Sole</h5>
-                                        <div class="material-inputs-detailed">
-                                            <input type="text" id="edit-sole-vendor" class="form-control" placeholder="Vendor">
-                                            <select id="edit-sole-stage" class="form-control">
-                                                <option value="Not Started">Not Started</option>
-                                                <option value="Sourcing">Sourcing</option>
-                                                <option value="Ordered">Ordered</option>
-                                                <option value="Delivered">Delivered</option>
-                                                <option value="Quality Check">Quality Check</option>
-                                                <option value="Approved">Approved</option>
-                                            </select>
-                                            <input type="date" id="edit-sole-delivery-date" class="form-control" placeholder="Delivery Date">
-                                            <input type="text" id="edit-sole-notes" class="form-control" placeholder="Notes">
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="material-section">
-                                        <h5>Other Material 1</h5>
-                                        <div class="material-inputs-detailed">
-                                            <input type="text" id="edit-other1-name" class="form-control" placeholder="Material Name">
-                                            <input type="text" id="edit-other1-vendor" class="form-control" placeholder="Vendor">
-                                            <select id="edit-other1-stage" class="form-control">
-                                                <option value="Not Started">Not Started</option>
-                                                <option value="Sourcing">Sourcing</option>
-                                                <option value="Ordered">Ordered</option>
-                                                <option value="Delivered">Delivered</option>
-                                                <option value="Quality Check">Quality Check</option>
-                                                <option value="Approved">Approved</option>
-                                            </select>
-                                            <input type="date" id="edit-other1-delivery-date" class="form-control" placeholder="Delivery Date">
-                                            <input type="text" id="edit-other1-notes" class="form-control" placeholder="Notes">
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="material-section">
-                                        <h5>Other Material 2</h5>
-                                        <div class="material-inputs-detailed">
-                                            <input type="text" id="edit-other2-name" class="form-control" placeholder="Material Name">
-                                            <input type="text" id="edit-other2-vendor" class="form-control" placeholder="Vendor">
-                                            <select id="edit-other2-stage" class="form-control">
-                                                <option value="Not Started">Not Started</option>
-                                                <option value="Sourcing">Sourcing</option>
-                                                <option value="Ordered">Ordered</option>
-                                                <option value="Delivered">Delivered</option>
-                                                <option value="Quality Check">Quality Check</option>
-                                                <option value="Approved">Approved</option>
-                                            </select>
-                                            <input type="date" id="edit-other2-delivery-date" class="form-control" placeholder="Delivery Date">
-                                            <input type="text" id="edit-other2-notes" class="form-control" placeholder="Notes">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Development Tab -->
-                            <div id="development-tab" class="tab-panel">
-                                <div class="stages-grid">
-                                    <div class="stage-group">
-                                        <h5>Development Stages</h5>
-                                        <div class="stage-item-detailed">
-                                            <label>Pattern Trial</label>
-                                            <div class="stage-controls">
-                                                <select id="detail-pattern" class="form-control stage-select">
-                                                    <option value="Not Started">Not Started</option>
-                                                    <option value="In Progress">In Progress</option>
-                                                    <option value="Completed">Completed</option>
-                                                    <option value="Failed">Failed</option>
-                                                </select>
-                                                <input type="date" id="detail-pattern-delivery" class="form-control">
-                                                <input type="text" id="detail-pattern-notes" class="form-control" placeholder="Notes">
-                                            </div>
-                                        </div>
-                                        <div class="stage-item-detailed">
-                                            <label>Upper Ready</label>
-                                            <div class="stage-controls">
-                                                <select id="detail-upper" class="form-control stage-select">
-                                                    <option value="Not Started">Not Started</option>
-                                                    <option value="In Progress">In Progress</option>
-                                                    <option value="Completed">Completed</option>
-                                                </select>
-                                                <input type="date" id="detail-upper-delivery" class="form-control">
-                                                <input type="text" id="detail-upper-notes" class="form-control" placeholder="Notes">
-                                            </div>
-                                        </div>
-                                        <div class="stage-item-detailed">
-                                            <label>Sole Ready</label>
-                                            <div class="stage-controls">
-                                                <select id="detail-sole" class="form-control stage-select">
-                                                    <option value="Not Started">Not Started</option>
-                                                    <option value="In Progress">In Progress</option>
-                                                    <option value="Completed">Completed</option>
-                                                </select>
-                                                <input type="date" id="detail-sole-delivery" class="form-control">
-                                                <input type="text" id="detail-sole-notes" class="form-control" placeholder="Notes">
-                                            </div>
-                                        </div>
-                                        <div class="stage-item-detailed">
-                                            <label>Assembly</label>
-                                            <div class="stage-controls">
-                                                <select id="detail-assembly" class="form-control stage-select">
-                                                    <option value="Not Started">Not Started</option>
-                                                    <option value="In Progress">In Progress</option>
-                                                    <option value="Completed">Completed</option>
-                                                </select>
-                                                <input type="date" id="detail-assembly-delivery" class="form-control">
-                                                <input type="text" id="detail-assembly-notes" class="form-control" placeholder="Notes">
-                                            </div>
-                                        </div>
-                                        <div class="stage-item-detailed">
-                                            <label>Quality Check</label>
-                                            <div class="stage-controls">
-                                                <select id="detail-quality" class="form-control stage-select">
-                                                    <option value="Not Started">Not Started</option>
-                                                    <option value="In Progress">In Progress</option>
-                                                    <option value="Completed">Completed</option>
-                                                    <option value="Failed">Failed</option>
-                                                </select>
-                                                <input type="date" id="detail-quality-delivery" class="form-control">
-                                                <input type="text" id="detail-quality-notes" class="form-control" placeholder="Notes">
-                                            </div>
-                                        </div>
-                                        <div class="stage-item-detailed">
-                                            <label>Ready to Ship</label>
-                                            <div class="stage-controls">
-                                                <select id="detail-ready-ship" class="form-control stage-select">
-                                                    <option value="false">No</option>
-                                                    <option value="true">Yes</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Photos Tab -->
-                            <div id="photos-tab" class="tab-panel">
-                                <div class="photo-management">
-                                    <h5>Photo Gallery</h5>
-                                    <div class="photo-upload-controls">
-                                        <input type="file" id="modal-photo-input" class="form-control" multiple accept="image/*">
-                                        <button type="button" id="modal-camera-button" class="btn btn--outline camera-btn">
-                                            📷 Take Photo
-                                        </button>
-                                        <input type="file" id="modal-camera-input" accept="image/*" capture="environment" style="display: none;">
-                                    </div>
-                                    <div id="modal-photo-gallery" class="photo-gallery-modal"></div>
-                                </div>
-                            </div>
-                            
-                            <!-- History Tab -->
-                            <div id="history-tab" class="tab-panel">
-                                <div class="edit-history">
-                                    <h5>Edit History</h5>
-                                    <div id="edit-history-list" class="history-list"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn btn--primary" onclick="saveSampleChanges()">Save Changes</button>
-                        <button class="btn btn--secondary" onclick="closeSampleModal()">Cancel</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- User Name Modal -->
-            <div id="user-name-modal" class="modal hidden">
-                <div class="modal-content user-name-modal">
-                    <div class="modal-header">
-                        <h3>Enter Your Name</h3>
-                    </div>
-                    <div class="modal-body">
-                        <p>Please enter your name to track this edit:</p>
-                        <input type="text" id="user-name-input" class="form-control" placeholder="Your name" required>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn btn--primary" onclick="confirmUserName()">Confirm</button>
-                        <button class="btn btn--secondary" onclick="cancelUserName()">Cancel</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Delete Confirmation Modal -->
-            <div id="delete-modal" class="modal hidden">
-                <div class="modal-content delete-modal">
-                    <div class="modal-header">
-                        <h3>Confirm Deletion</h3>
-                    </div>
-                    <div class="modal-body">
-                        <p>Are you sure you want to delete this sample?</p>
-                        <p><strong id="delete-sample-name"></strong> (<span id="delete-sample-id"></span>)</p>
-                        <p class="warning-text">This action cannot be undone.</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn btn--primary" onclick="confirmDelete()">Delete</button>
-                        <button class="btn btn--secondary" onclick="cancelDelete()">Cancel</button>
-                    </div>
-                </div>
-            </div>
         </div>
-    </main>
 
-    <script src="app.js"></script>
+        <!-- Loading Indicator -->
+        <div id="loadingIndicator" class="loading-indicator">
+            <div class="spinner"></div>
+            <p id="loadingText">Processing...</p>
+        </div>
+
+        <!-- Toast Notification -->
+        <div id="toast" class="toast"></div>
+    </div>
+
+    <script>
+        // ==================== STATE MANAGEMENT ====================
+        let samples = [];
+        let currentView = 'dashboard';
+        let currentUser = 'Guest';
+        let githubToken = null;
+        let filteredSamples = [];
+        let editingPhotos = [];
+        let currentEditingSampleId = null;
+
+        // ==================== INITIALIZATION ====================
+        window.addEventListener('DOMContentLoaded', () => {
+            initializeApp();
+        });
+
+        function initializeApp() {
+            loadSamples();
+            setupUserInput();
+            renderCurrentView();
+        }
+
+        function setupUserInput() {
+            const userInput = document.getElementById('userName');
+            userInput.value = currentUser;
+            userInput.addEventListener('change', (e) => {
+                currentUser = e.target.value.trim() || 'Guest';
+                showToast('User name updated', 'success');
+            });
+        }
+
+        // ==================== DATA MANAGEMENT ====================
+        function loadSamples() {
+            // Data persists in memory during the session
+            // No localStorage used (sandboxed environment)
+            filteredSamples = [...samples];
+        }
+
+        function saveSamples() {
+            // Data is already in memory, no action needed
+            // In production, this would sync to localStorage or server
+        }
+
+        // ==================== PHOTO COMPRESSION ====================
+        async function compressImage(base64String, maxWidth = 800, maxHeight = 800, quality = 0.7) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width, height = img.height;
+                    
+                    if (width > height) {
+                        if (width > maxWidth) {
+                            height = Math.round(height * (maxWidth / width));
+                            width = maxWidth;
+                        }
+                    } else {
+                        if (height > maxHeight) {
+                            width = Math.round(width * (maxHeight / height));
+                            height = maxHeight;
+                        }
+                    }
+                    
+                    canvas.width = width;
+                    canvas.height = height;
+                    canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+                    
+                    const compressed = canvas.toDataURL('image/jpeg', quality);
+                    const ratio = Math.round((1 - compressed.length / base64String.length) * 100);
+                    console.log(`Photo compressed: ${ratio}% smaller`);
+                    
+                    resolve(compressed);
+                };
+                img.onerror = () => resolve(base64String);
+                img.src = base64String;
+            });
+        }
+
+        async function handlePhotoUpload(event) {
+            const files = event.target.files;
+            if (!files.length) return;
+
+            showLoading('Compressing images...');
+
+            for (let file of files) {
+                const reader = new FileReader();
+                reader.onload = async (e) => {
+                    const compressed = await compressImage(e.target.result);
+                    editingPhotos.push(compressed);
+                    displayPhotoPreview();
+                };
+                reader.readAsDataURL(file);
+            }
+
+            setTimeout(() => hideLoading(), 500);
+            event.target.value = '';
+        }
+
+        function displayPhotoPreview() {
+            const container = document.getElementById('photoPreview');
+            container.innerHTML = '';
+            
+            editingPhotos.forEach((photo, index) => {
+                const div = document.createElement('div');
+                div.className = 'photo-preview-item';
+                div.innerHTML = `
+                    <img src="${photo}" alt="Photo ${index + 1}">
+                    <button type="button" class="photo-preview-remove" onclick="removePhoto(${index})">&times;</button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function removePhoto(index) {
+            editingPhotos.splice(index, 1);
+            displayPhotoPreview();
+        }
+
+        // ==================== VIEW MANAGEMENT ====================
+        function toggleView() {
+            const views = ['dashboard', 'list', 'kanban'];
+            const currentIndex = views.indexOf(currentView);
+            currentView = views[(currentIndex + 1) % views.length];
+            
+            document.querySelectorAll('.view-container').forEach(v => v.classList.remove('active'));
+            document.getElementById(currentView + 'View').classList.add('active');
+            
+            const labels = { dashboard: '📊 Dashboard', list: '📋 List', kanban: '📌 Kanban' };
+            document.getElementById('viewToggle').textContent = labels[currentView];
+            
+            renderCurrentView();
+        }
+
+        function renderCurrentView() {
+            if (currentView === 'dashboard') renderDashboard();
+            else if (currentView === 'list') renderList();
+            else if (currentView === 'kanban') renderKanban();
+        }
+
+        function renderDashboard() {
+            const grid = document.getElementById('samplesGrid');
+            grid.innerHTML = '';
+            
+            if (filteredSamples.length === 0) {
+                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 48px; color: var(--color-text-secondary);">No samples found. Click "Add Sample" to get started!</div>';
+                return;
+            }
+            
+            filteredSamples.forEach(sample => {
+                const card = document.createElement('div');
+                card.className = 'sample-card';
+                card.onclick = () => viewSampleDetails(sample.id);
+                
+                const imageHTML = sample.photos && sample.photos.length > 0
+                    ? `<img src="${sample.photos[0]}" alt="${sample.sampleName}">`
+                    : '<div style="display: flex; align-items: center; justify-content: center; height: 100%;">No Image</div>';
+                
+                const stageClass = sample.currentStage.toLowerCase().replace(/ /g, '-');
+                
+                card.innerHTML = `
+                    <div class="sample-card-image">${imageHTML}</div>
+                    <div class="sample-card-body">
+                        <div class="sample-card-title">${sample.sampleName}</div>
+                        <div class="sample-card-id">${sample.id}</div>
+                        <div class="sample-card-meta">
+                            <div><strong>Client:</strong> ${sample.client}</div>
+                            <div><strong>Received:</strong> ${formatDate(sample.dateReceived)}</div>
+                            ${sample.savedBy ? `<div><strong>Saved by:</strong> ${sample.savedBy}</div>` : ''}
+                        </div>
+                        <div class="sample-card-footer">
+                            <span class="status-badge ${stageClass}">${sample.currentStage}</span>
+                            <span style="font-size: var(--font-size-xs); color: var(--color-text-secondary);">
+                                ${sample.photos ? sample.photos.length : 0} photos
+                            </span>
+                        </div>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        function renderList() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            
+            if (filteredSamples.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 48px;">No samples found</td></tr>';
+                return;
+            }
+            
+            filteredSamples.forEach(sample => {
+                const row = document.createElement('tr');
+                const stageClass = sample.currentStage.toLowerCase().replace(/ /g, '-');
+                
+                row.innerHTML = `
+                    <td>${sample.id}</td>
+                    <td>${sample.sampleName}</td>
+                    <td>${sample.client}</td>
+                    <td>${formatDate(sample.dateReceived)}</td>
+                    <td><span class="status-badge ${stageClass}">${sample.currentStage}</span></td>
+                    <td>${sample.photos ? sample.photos.length : 0}</td>
+                    <td>${sample.lastEditedBy || 'N/A'}</td>
+                    <td>
+                        <button class="action-btn" onclick="event.stopPropagation(); viewSampleDetails('${sample.id}')">View</button>
+                        <button class="action-btn" onclick="event.stopPropagation(); editSample('${sample.id}')">Edit</button>
+                        <button class="action-btn delete" onclick="event.stopPropagation(); deleteSample('${sample.id}')">Delete</button>
+                    </td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+        }
+
+        function renderKanban() {
+            const stages = ['Material', 'Development', 'Quality Check', 'Ready to Ship', 'Delivered'];
+            
+            stages.forEach(stage => {
+                const container = document.querySelector(`.kanban-lane[data-stage="${stage}"]`);
+                container.innerHTML = '';
+                
+                const stageSamples = filteredSamples.filter(s => s.currentStage === stage);
+                
+                if (stageSamples.length === 0) {
+                    container.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--color-text-secondary); font-size: var(--font-size-sm);">No samples</div>';
+                    return;
+                }
+                
+                stageSamples.forEach(sample => {
+                    const card = document.createElement('div');
+                    card.className = 'kanban-card';
+                    card.draggable = true;
+                    card.dataset.id = sample.id;
+                    card.onclick = () => viewSampleDetails(sample.id);
+                    
+                    card.innerHTML = `
+                        <div class="kanban-card-title">${sample.sampleName}</div>
+                        <div class="kanban-card-id">${sample.id}</div>
+                        <div class="kanban-card-client">${sample.client}</div>
+                    `;
+                    
+                    card.addEventListener('dragstart', handleDragStart);
+                    card.addEventListener('dragend', handleDragEnd);
+                    
+                    container.appendChild(card);
+                });
+            });
+            
+            // Setup drop zones
+            document.querySelectorAll('.kanban-lane').forEach(lane => {
+                lane.addEventListener('dragover', handleDragOver);
+                lane.addEventListener('drop', handleDrop);
+            });
+        }
+
+        let draggedElement = null;
+
+        function handleDragStart(e) {
+            draggedElement = e.target;
+            e.target.classList.add('dragging');
+        }
+
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            if (!draggedElement) return;
+            
+            const sampleId = draggedElement.dataset.id;
+            const newStage = e.target.closest('.kanban-lane').dataset.stage;
+            
+            updateSampleStage(sampleId, newStage);
+            draggedElement = null;
+        }
+
+        function updateSampleStage(sampleId, newStage) {
+            const sample = samples.find(s => s.id === sampleId);
+            if (!sample) return;
+            
+            sample.currentStage = newStage;
+            sample.lastEditedBy = currentUser;
+            sample.lastEditedDate = new Date().toISOString();
+            
+            saveSamples();
+            filterSamples();
+            showToast('Sample stage updated', 'success');
+        }
+
+        // ==================== SEARCH & FILTER ====================
+        function filterSamples() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const stageFilter = document.getElementById('stageFilter').value;
+            
+            filteredSamples = samples.filter(sample => {
+                const matchesSearch = !searchTerm || 
+                    sample.id.toLowerCase().includes(searchTerm) ||
+                    sample.sampleName.toLowerCase().includes(searchTerm) ||
+                    sample.client.toLowerCase().includes(searchTerm) ||
+                    (sample.notes && sample.notes.toLowerCase().includes(searchTerm));
+                
+                const matchesStage = !stageFilter || sample.currentStage === stageFilter;
+                
+                return matchesSearch && matchesStage;
+            });
+            
+            renderCurrentView();
+        }
+
+        // ==================== MODAL MANAGEMENT ====================
+        function openAddSampleModal() {
+            currentEditingSampleId = null;
+            editingPhotos = [];
+            document.getElementById('modalTitle').textContent = 'Add New Sample';
+            document.getElementById('sampleForm').reset();
+            document.getElementById('photoPreview').innerHTML = '';
+            document.getElementById('sampleModal').classList.add('show');
+        }
+
+        function editSample(sampleId) {
+            const sample = samples.find(s => s.id === sampleId);
+            if (!sample) return;
+            
+            currentEditingSampleId = sampleId;
+            editingPhotos = sample.photos ? [...sample.photos] : [];
+            
+            document.getElementById('modalTitle').textContent = 'Edit Sample';
+            document.getElementById('sampleName').value = sample.sampleName;
+            document.getElementById('client').value = sample.client;
+            document.getElementById('dateReceived').value = sample.dateReceived;
+            document.getElementById('currentStage').value = sample.currentStage;
+            document.getElementById('notes').value = sample.notes || '';
+            
+            if (sample.materialDetails) {
+                document.getElementById('upperVendor').value = sample.materialDetails.upperMaterial?.vendor || '';
+                document.getElementById('upperStage').value = sample.materialDetails.upperMaterial?.stage || '';
+                document.getElementById('upperDeliveryDate').value = sample.materialDetails.upperMaterial?.deliveryDate || '';
+                document.getElementById('upperRemarks').value = sample.materialDetails.upperMaterial?.remarks || '';
+                
+                document.getElementById('lastVendor').value = sample.materialDetails.last?.vendor || '';
+                document.getElementById('lastStage').value = sample.materialDetails.last?.stage || '';
+                document.getElementById('lastDeliveryDate').value = sample.materialDetails.last?.deliveryDate || '';
+                document.getElementById('lastRemarks').value = sample.materialDetails.last?.remarks || '';
+                
+                document.getElementById('soleVendor').value = sample.materialDetails.sole?.vendor || '';
+                document.getElementById('soleStage').value = sample.materialDetails.sole?.stage || '';
+                document.getElementById('soleDeliveryDate').value = sample.materialDetails.sole?.deliveryDate || '';
+                document.getElementById('soleRemarks').value = sample.materialDetails.sole?.remarks || '';
+                
+                document.getElementById('other1Name').value = sample.materialDetails.other1?.name || '';
+                document.getElementById('other1Vendor').value = sample.materialDetails.other1?.vendor || '';
+                document.getElementById('other1Stage').value = sample.materialDetails.other1?.stage || '';
+                document.getElementById('other1DeliveryDate').value = sample.materialDetails.other1?.deliveryDate || '';
+                document.getElementById('other1Remarks').value = sample.materialDetails.other1?.remarks || '';
+                
+                document.getElementById('other2Name').value = sample.materialDetails.other2?.name || '';
+                document.getElementById('other2Vendor').value = sample.materialDetails.other2?.vendor || '';
+                document.getElementById('other2Stage').value = sample.materialDetails.other2?.stage || '';
+                document.getElementById('other2DeliveryDate').value = sample.materialDetails.other2?.deliveryDate || '';
+                document.getElementById('other2Remarks').value = sample.materialDetails.other2?.remarks || '';
+            }
+            
+            if (sample.developmentStages) {
+                document.getElementById('patternStatus').value = sample.developmentStages.patternTrial?.status || '';
+                document.getElementById('patternDate').value = sample.developmentStages.patternTrial?.deliveryDate || '';
+                document.getElementById('patternRemarks').value = sample.developmentStages.patternTrial?.remarks || '';
+                
+                document.getElementById('upperReadyStatus').value = sample.developmentStages.upperReady?.status || '';
+                document.getElementById('upperReadyDate').value = sample.developmentStages.upperReady?.deliveryDate || '';
+                document.getElementById('upperReadyRemarks').value = sample.developmentStages.upperReady?.remarks || '';
+                
+                document.getElementById('soleReadyStatus').value = sample.developmentStages.soleReady?.status || '';
+                document.getElementById('soleReadyDate').value = sample.developmentStages.soleReady?.deliveryDate || '';
+                document.getElementById('soleReadyRemarks').value = sample.developmentStages.soleReady?.remarks || '';
+                
+                document.getElementById('assemblyStatus').value = sample.developmentStages.assembly?.status || '';
+                document.getElementById('assemblyDate').value = sample.developmentStages.assembly?.deliveryDate || '';
+                document.getElementById('assemblyRemarks').value = sample.developmentStages.assembly?.remarks || '';
+                
+                document.getElementById('qualityStatus').value = sample.developmentStages.qualityCheck?.status || '';
+                document.getElementById('qualityDate').value = sample.developmentStages.qualityCheck?.deliveryDate || '';
+                document.getElementById('qualityRemarks').value = sample.developmentStages.qualityCheck?.remarks || '';
+            }
+            
+            displayPhotoPreview();
+            document.getElementById('sampleModal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('sampleModal').classList.remove('show');
+            editingPhotos = [];
+            currentEditingSampleId = null;
+        }
+
+        function saveSample(event) {
+            event.preventDefault();
+            
+            const sampleData = {
+                id: currentEditingSampleId || 'FS-' + Date.now().toString().slice(-6),
+                sampleName: document.getElementById('sampleName').value,
+                client: document.getElementById('client').value,
+                dateReceived: document.getElementById('dateReceived').value,
+                currentStage: document.getElementById('currentStage').value,
+                notes: document.getElementById('notes').value,
+                photos: editingPhotos,
+                savedBy: currentEditingSampleId ? (samples.find(s => s.id === currentEditingSampleId)?.savedBy || currentUser) : currentUser,
+                lastEditedBy: currentUser,
+                lastEditedDate: new Date().toISOString(),
+                materialDetails: {
+                    upperMaterial: { 
+                        vendor: document.getElementById('upperVendor').value,
+                        stage: document.getElementById('upperStage').value,
+                        deliveryDate: document.getElementById('upperDeliveryDate').value,
+                        remarks: document.getElementById('upperRemarks').value
+                    },
+                    last: { 
+                        vendor: document.getElementById('lastVendor').value,
+                        stage: document.getElementById('lastStage').value,
+                        deliveryDate: document.getElementById('lastDeliveryDate').value,
+                        remarks: document.getElementById('lastRemarks').value
+                    },
+                    sole: { 
+                        vendor: document.getElementById('soleVendor').value,
+                        stage: document.getElementById('soleStage').value,
+                        deliveryDate: document.getElementById('soleDeliveryDate').value,
+                        remarks: document.getElementById('soleRemarks').value
+                    },
+                    other1: {
+                        name: document.getElementById('other1Name').value,
+                        vendor: document.getElementById('other1Vendor').value,
+                        stage: document.getElementById('other1Stage').value,
+                        deliveryDate: document.getElementById('other1DeliveryDate').value,
+                        remarks: document.getElementById('other1Remarks').value
+                    },
+                    other2: {
+                        name: document.getElementById('other2Name').value,
+                        vendor: document.getElementById('other2Vendor').value,
+                        stage: document.getElementById('other2Stage').value,
+                        deliveryDate: document.getElementById('other2DeliveryDate').value,
+                        remarks: document.getElementById('other2Remarks').value
+                    }
+                },
+                developmentStages: {
+                    patternTrial: {
+                        status: document.getElementById('patternStatus').value,
+                        deliveryDate: document.getElementById('patternDate').value,
+                        remarks: document.getElementById('patternRemarks').value
+                    },
+                    upperReady: {
+                        status: document.getElementById('upperReadyStatus').value,
+                        deliveryDate: document.getElementById('upperReadyDate').value,
+                        remarks: document.getElementById('upperReadyRemarks').value
+                    },
+                    soleReady: {
+                        status: document.getElementById('soleReadyStatus').value,
+                        deliveryDate: document.getElementById('soleReadyDate').value,
+                        remarks: document.getElementById('soleReadyRemarks').value
+                    },
+                    assembly: {
+                        status: document.getElementById('assemblyStatus').value,
+                        deliveryDate: document.getElementById('assemblyDate').value,
+                        remarks: document.getElementById('assemblyRemarks').value
+                    },
+                    qualityCheck: {
+                        status: document.getElementById('qualityStatus').value,
+                        deliveryDate: document.getElementById('qualityDate').value,
+                        remarks: document.getElementById('qualityRemarks').value
+                    }
+                },
+                editHistory: currentEditingSampleId ? (samples.find(s => s.id === currentEditingSampleId)?.editHistory || []) : []
+            };
+            
+            if (currentEditingSampleId) {
+                const index = samples.findIndex(s => s.id === currentEditingSampleId);
+                if (index !== -1) {
+                    sampleData.editHistory.push({
+                        user: currentUser,
+                        date: new Date().toISOString(),
+                        change: 'Sample updated'
+                    });
+                    samples[index] = sampleData;
+                    showToast('Sample updated successfully', 'success');
+                }
+            } else {
+                sampleData.editHistory.push({
+                    user: currentUser,
+                    date: new Date().toISOString(),
+                    change: 'Sample created'
+                });
+                samples.push(sampleData);
+                showToast('Sample added successfully', 'success');
+            }
+            
+            saveSamples();
+            closeModal();
+            filterSamples();
+        }
+
+        function viewSampleDetails(sampleId) {
+            const sample = samples.find(s => s.id === sampleId);
+            if (!sample) return;
+            
+            let detailsHTML = `
+                <div style="margin-bottom: 24px;">
+                    <h3 style="font-size: 18px; margin-bottom: 16px; border-bottom: 1px solid var(--color-border); padding-bottom: 8px;">Basic Information</h3>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                        <div><strong>ID:</strong> ${sample.id}</div>
+                        <div><strong>Sample Name:</strong> ${sample.sampleName}</div>
+                        <div><strong>Client:</strong> ${sample.client}</div>
+                        <div><strong>Date Received:</strong> ${formatDate(sample.dateReceived)}</div>
+                        <div><strong>Current Stage:</strong> ${sample.currentStage}</div>
+                        <div><strong>Saved By:</strong> ${sample.savedBy || 'N/A'}</div>
+                        <div><strong>Last Edited By:</strong> ${sample.lastEditedBy || 'N/A'}</div>
+                        <div><strong>Last Edited:</strong> ${formatDate(sample.lastEditedDate)}</div>
+                    </div>
+                    ${sample.notes ? `<div style="margin-top: 12px;"><strong>Notes:</strong> ${sample.notes}</div>` : ''}
+                </div>
+                
+                <div style="margin-bottom: 24px;">
+                    <h3 style="font-size: 18px; margin-bottom: 16px; border-bottom: 1px solid var(--color-border); padding-bottom: 8px;">Material Details</h3>
+                    
+                    <h4 style="font-size: 14px; margin: 12px 0 8px; font-weight: 600;">Upper Material</h4>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; font-size: 13px;">
+                        <div><strong>Vendor:</strong> ${sample.materialDetails?.upperMaterial?.vendor || 'N/A'}</div>
+                        <div><strong>Stage:</strong> ${sample.materialDetails?.upperMaterial?.stage || 'N/A'}</div>
+                        <div><strong>Delivery Date:</strong> ${sample.materialDetails?.upperMaterial?.deliveryDate ? formatDate(sample.materialDetails.upperMaterial.deliveryDate) : 'N/A'}</div>
+                        <div><strong>Remarks:</strong> ${sample.materialDetails?.upperMaterial?.remarks || 'N/A'}</div>
+                    </div>
+                    
+                    <h4 style="font-size: 14px; margin: 12px 0 8px; font-weight: 600;">Last</h4>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; font-size: 13px;">
+                        <div><strong>Vendor:</strong> ${sample.materialDetails?.last?.vendor || 'N/A'}</div>
+                        <div><strong>Stage:</strong> ${sample.materialDetails?.last?.stage || 'N/A'}</div>
+                        <div><strong>Delivery Date:</strong> ${sample.materialDetails?.last?.deliveryDate ? formatDate(sample.materialDetails.last.deliveryDate) : 'N/A'}</div>
+                        <div><strong>Remarks:</strong> ${sample.materialDetails?.last?.remarks || 'N/A'}</div>
+                    </div>
+                    
+                    <h4 style="font-size: 14px; margin: 12px 0 8px; font-weight: 600;">Sole</h4>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; font-size: 13px;">
+                        <div><strong>Vendor:</strong> ${sample.materialDetails?.sole?.vendor || 'N/A'}</div>
+                        <div><strong>Stage:</strong> ${sample.materialDetails?.sole?.stage || 'N/A'}</div>
+                        <div><strong>Delivery Date:</strong> ${sample.materialDetails?.sole?.deliveryDate ? formatDate(sample.materialDetails.sole.deliveryDate) : 'N/A'}</div>
+                        <div><strong>Remarks:</strong> ${sample.materialDetails?.sole?.remarks || 'N/A'}</div>
+                    </div>
+                    
+                    ${sample.materialDetails?.other1?.name ? `
+                    <h4 style="font-size: 14px; margin: 12px 0 8px; font-weight: 600;">Other Material 1: ${sample.materialDetails.other1.name}</h4>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; font-size: 13px;">
+                        <div><strong>Vendor:</strong> ${sample.materialDetails.other1.vendor || 'N/A'}</div>
+                        <div><strong>Stage:</strong> ${sample.materialDetails.other1.stage || 'N/A'}</div>
+                        <div><strong>Delivery Date:</strong> ${sample.materialDetails.other1.deliveryDate ? formatDate(sample.materialDetails.other1.deliveryDate) : 'N/A'}</div>
+                        <div><strong>Remarks:</strong> ${sample.materialDetails.other1.remarks || 'N/A'}</div>
+                    </div>
+                    ` : ''}
+                    
+                    ${sample.materialDetails?.other2?.name ? `
+                    <h4 style="font-size: 14px; margin: 12px 0 8px; font-weight: 600;">Other Material 2: ${sample.materialDetails.other2.name}</h4>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; font-size: 13px;">
+                        <div><strong>Vendor:</strong> ${sample.materialDetails.other2.vendor || 'N/A'}</div>
+                        <div><strong>Stage:</strong> ${sample.materialDetails.other2.stage || 'N/A'}</div>
+                        <div><strong>Delivery Date:</strong> ${sample.materialDetails.other2.deliveryDate ? formatDate(sample.materialDetails.other2.deliveryDate) : 'N/A'}</div>
+                        <div><strong>Remarks:</strong> ${sample.materialDetails.other2.remarks || 'N/A'}</div>
+                    </div>
+                    ` : ''}
+                </div>
+                
+                <div style="margin-bottom: 24px;">
+                    <h3 style="font-size: 18px; margin-bottom: 16px; border-bottom: 1px solid var(--color-border); padding-bottom: 8px;">Development Stages</h3>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; font-size: 13px;">
+                        <div><strong>Pattern Trial:</strong> ${sample.developmentStages?.patternTrial?.status || 'N/A'} ${sample.developmentStages?.patternTrial?.deliveryDate ? `(${formatDate(sample.developmentStages.patternTrial.deliveryDate)})` : ''}</div>
+                        <div><strong>Upper Ready:</strong> ${sample.developmentStages?.upperReady?.status || 'N/A'} ${sample.developmentStages?.upperReady?.deliveryDate ? `(${formatDate(sample.developmentStages.upperReady.deliveryDate)})` : ''}</div>
+                        <div><strong>Sole Ready:</strong> ${sample.developmentStages?.soleReady?.status || 'N/A'} ${sample.developmentStages?.soleReady?.deliveryDate ? `(${formatDate(sample.developmentStages.soleReady.deliveryDate)})` : ''}</div>
+                        <div><strong>Assembly:</strong> ${sample.developmentStages?.assembly?.status || 'N/A'} ${sample.developmentStages?.assembly?.deliveryDate ? `(${formatDate(sample.developmentStages.assembly.deliveryDate)})` : ''}</div>
+                        <div><strong>Quality Check:</strong> ${sample.developmentStages?.qualityCheck?.status || 'N/A'} ${sample.developmentStages?.qualityCheck?.deliveryDate ? `(${formatDate(sample.developmentStages.qualityCheck.deliveryDate)})` : ''}</div>
+                    </div>
+                </div>
+                
+                ${sample.photos && sample.photos.length > 0 ? `
+                <div style="margin-bottom: 24px;">
+                    <h3 style="font-size: 18px; margin-bottom: 16px; border-bottom: 1px solid var(--color-border); padding-bottom: 8px;">Photos (${sample.photos.length})</h3>
+                    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                        ${sample.photos.map((photo, i) => `
+                            <div style="width: 100px; height: 100px; border: 1px solid var(--color-border); border-radius: 8px; overflow: hidden; cursor: pointer;" onclick="window.open('${photo}', '_blank')">
+                                <img src="${photo}" alt="Photo ${i+1}" style="width: 100%; height: 100%; object-fit: cover;">
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                ` : ''}
+                
+                ${sample.editHistory && sample.editHistory.length > 0 ? `
+                <div style="margin-bottom: 24px;">
+                    <h3 style="font-size: 18px; margin-bottom: 16px; border-bottom: 1px solid var(--color-border); padding-bottom: 8px;">Edit History</h3>
+                    ${sample.editHistory.map(edit => `
+                        <div style="padding: 8px 0; border-bottom: 1px solid var(--color-border); font-size: 13px;">
+                            <strong>${edit.user}</strong> - ${formatDate(edit.date)}<br>
+                            <span style="color: var(--color-text-secondary);">${edit.change}</span>
+                        </div>
+                    `).join('')}
+                </div>
+                ` : ''}
+            `;
+            
+            const detailsDiv = document.createElement('div');
+            detailsDiv.innerHTML = `
+                <div class="modal" style="display: flex;">
+                    <div class="modal-content" style="max-width: 800px;">
+                        <span class="modal-close" onclick="this.closest('.modal').remove()">&times;</span>
+                        <h2>Sample Details</h2>
+                        <div style="max-height: 70vh; overflow-y: auto; padding: 10px 0;">
+                            ${detailsHTML}
+                        </div>
+                        <div class="form-actions">
+                            <button class="btn btn-primary" onclick="this.closest('.modal').remove(); editSample('${sampleId}')">✏️ Edit</button>
+                            <button class="btn btn-secondary" onclick="if(confirm('Delete this sample?')) { deleteSample('${sampleId}'); this.closest('.modal').remove(); }">🗑️ Delete</button>
+                            <button class="btn btn-secondary" onclick="this.closest('.modal').remove()">Close</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(detailsDiv);
+        }
+
+        function deleteSample(sampleId) {
+            if (!confirm('Are you sure you want to delete this sample?')) return;
+            
+            const index = samples.findIndex(s => s.id === sampleId);
+            if (index !== -1) {
+                samples.splice(index, 1);
+                saveSamples();
+                filterSamples();
+                showToast('Sample deleted', 'success');
+            }
+        }
+
+        // ==================== EXPORT/IMPORT ====================
+        async function exportToExcel() {
+            if (!window.ExcelJS) {
+                showToast('ExcelJS library not loaded', 'error');
+                return;
+            }
+            
+            if (samples.length === 0) {
+                showToast('No samples to export', 'warning');
+                return;
+            }
+            
+            showLoading('Creating comprehensive Excel file...');
+            
+            try {
+                const workbook = new ExcelJS.Workbook();
+                
+                // SHEET 1: Main Samples Info
+                const sheet1 = workbook.addWorksheet('Samples Overview');
+                sheet1.columns = [
+                    { header: 'ID', key: 'id', width: 12 },
+                    { header: 'Sample Name', key: 'sampleName', width: 25 },
+                    { header: 'Client', key: 'client', width: 20 },
+                    { header: 'Date Received', key: 'dateReceived', width: 15 },
+                    { header: 'Current Stage', key: 'currentStage', width: 18 },
+                    { header: 'Saved By', key: 'savedBy', width: 15 },
+                    { header: 'Last Edited By', key: 'lastEditedBy', width: 15 },
+                    { header: 'Last Edited Date', key: 'lastEditedDate', width: 20 },
+                    { header: 'Notes', key: 'notes', width: 35 },
+                    { header: 'Photo', key: 'photo', width: 15 }
+                ];
+                
+                sheet1.getRow(1).font = { bold: true, color: { argb: 'FFFFFFFF' } };
+                sheet1.getRow(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF217D8D' } };
+                sheet1.getRow(1).alignment = { vertical: 'middle', horizontal: 'center' };
+                
+                let rowIdx = 2;
+                for (const sample of samples) {
+                    sheet1.addRow({
+                        id: sample.id,
+                        sampleName: sample.sampleName,
+                        client: sample.client,
+                        dateReceived: sample.dateReceived,
+                        currentStage: sample.currentStage,
+                        savedBy: sample.savedBy || 'N/A',
+                        lastEditedBy: sample.lastEditedBy || 'N/A',
+                        lastEditedDate: sample.lastEditedDate ? new Date(sample.lastEditedDate).toLocaleDateString() : 'N/A',
+                        notes: sample.notes || '',
+                        photo: sample.photos && sample.photos.length > 0 ? 'See image →' : 'No photo'
+                    });
+                    
+                    if (sample.photos && sample.photos.length > 0) {
+                        try {
+                            const imageId = workbook.addImage({
+                                base64: sample.photos[0],
+                                extension: 'jpeg'
+                            });
+                            sheet1.addImage(imageId, {
+                                tl: { col: 9, row: rowIdx - 1 },
+                                ext: { width: 80, height: 80 }
+                            });
+                            sheet1.getRow(rowIdx).height = 65;
+                        } catch (e) {
+                            console.log('Image error:', e);
+                        }
+                    }
+                    rowIdx++;
+                }
+                
+                // SHEET 2: Material Details
+                const sheet2 = workbook.addWorksheet('Material Details');
+                sheet2.columns = [
+                    { header: 'Sample ID', key: 'id', width: 12 },
+                    { header: 'Sample Name', key: 'name', width: 25 },
+                    { header: 'Material Type', key: 'type', width: 20 },
+                    { header: 'Material Name', key: 'materialName', width: 20 },
+                    { header: 'Vendor', key: 'vendor', width: 25 },
+                    { header: 'Stage', key: 'stage', width: 15 },
+                    { header: 'Delivery Date', key: 'deliveryDate', width: 15 },
+                    { header: 'Remarks', key: 'remarks', width: 35 }
+                ];
+                
+                sheet2.getRow(1).font = { bold: true, color: { argb: 'FFFFFFFF' } };
+                sheet2.getRow(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF217D8D' } };
+                sheet2.getRow(1).alignment = { vertical: 'middle', horizontal: 'center' };
+                
+                samples.forEach(sample => {
+                    if (sample.materialDetails) {
+                        if (sample.materialDetails.upperMaterial) {
+                            sheet2.addRow({
+                                id: sample.id,
+                                name: sample.sampleName,
+                                type: 'Upper Material',
+                                materialName: 'Upper Material',
+                                vendor: sample.materialDetails.upperMaterial.vendor || 'N/A',
+                                stage: sample.materialDetails.upperMaterial.stage || 'N/A',
+                                deliveryDate: sample.materialDetails.upperMaterial.deliveryDate || 'N/A',
+                                remarks: sample.materialDetails.upperMaterial.remarks || 'N/A'
+                            });
+                        }
+                        if (sample.materialDetails.last) {
+                            sheet2.addRow({
+                                id: sample.id,
+                                name: sample.sampleName,
+                                type: 'Last',
+                                materialName: 'Last',
+                                vendor: sample.materialDetails.last.vendor || 'N/A',
+                                stage: sample.materialDetails.last.stage || 'N/A',
+                                deliveryDate: sample.materialDetails.last.deliveryDate || 'N/A',
+                                remarks: sample.materialDetails.last.remarks || 'N/A'
+                            });
+                        }
+                        if (sample.materialDetails.sole) {
+                            sheet2.addRow({
+                                id: sample.id,
+                                name: sample.sampleName,
+                                type: 'Sole',
+                                materialName: 'Sole',
+                                vendor: sample.materialDetails.sole.vendor || 'N/A',
+                                stage: sample.materialDetails.sole.stage || 'N/A',
+                                deliveryDate: sample.materialDetails.sole.deliveryDate || 'N/A',
+                                remarks: sample.materialDetails.sole.remarks || 'N/A'
+                            });
+                        }
+                        if (sample.materialDetails.other1 && sample.materialDetails.other1.name) {
+                            sheet2.addRow({
+                                id: sample.id,
+                                name: sample.sampleName,
+                                type: 'Other Material 1',
+                                materialName: sample.materialDetails.other1.name,
+                                vendor: sample.materialDetails.other1.vendor || 'N/A',
+                                stage: sample.materialDetails.other1.stage || 'N/A',
+                                deliveryDate: sample.materialDetails.other1.deliveryDate || 'N/A',
+                                remarks: sample.materialDetails.other1.remarks || 'N/A'
+                            });
+                        }
+                        if (sample.materialDetails.other2 && sample.materialDetails.other2.name) {
+                            sheet2.addRow({
+                                id: sample.id,
+                                name: sample.sampleName,
+                                type: 'Other Material 2',
+                                materialName: sample.materialDetails.other2.name,
+                                vendor: sample.materialDetails.other2.vendor || 'N/A',
+                                stage: sample.materialDetails.other2.stage || 'N/A',
+                                deliveryDate: sample.materialDetails.other2.deliveryDate || 'N/A',
+                                remarks: sample.materialDetails.other2.remarks || 'N/A'
+                            });
+                        }
+                    }
+                });
+                
+                // SHEET 3: Development Stages
+                const sheet3 = workbook.addWorksheet('Development Stages');
+                sheet3.columns = [
+                    { header: 'Sample ID', key: 'id', width: 12 },
+                    { header: 'Sample Name', key: 'name', width: 25 },
+                    { header: 'Stage', key: 'stage', width: 20 },
+                    { header: 'Status', key: 'status', width: 15 },
+                    { header: 'Delivery Date', key: 'deliveryDate', width: 15 },
+                    { header: 'Remarks', key: 'remarks', width: 40 }
+                ];
+                
+                sheet3.getRow(1).font = { bold: true, color: { argb: 'FFFFFFFF' } };
+                sheet3.getRow(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF217D8D' } };
+                sheet3.getRow(1).alignment = { vertical: 'middle', horizontal: 'center' };
+                
+                samples.forEach(sample => {
+                    if (sample.developmentStages) {
+                        const stages = [
+                            { key: 'patternTrial', name: 'Pattern Trial' },
+                            { key: 'upperReady', name: 'Upper Ready' },
+                            { key: 'soleReady', name: 'Sole Ready' },
+                            { key: 'assembly', name: 'Assembly' },
+                            { key: 'qualityCheck', name: 'Quality Check' }
+                        ];
+                        
+                        stages.forEach(stageInfo => {
+                            const stageData = sample.developmentStages[stageInfo.key];
+                            if (stageData && stageData.status) {
+                                sheet3.addRow({
+                                    id: sample.id,
+                                    name: sample.sampleName,
+                                    stage: stageInfo.name,
+                                    status: stageData.status || 'N/A',
+                                    deliveryDate: stageData.deliveryDate || 'N/A',
+                                    remarks: stageData.remarks || 'N/A'
+                                });
+                            }
+                        });
+                    }
+                });
+                
+                const buffer = await workbook.xlsx.writeBuffer();
+                const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `footwear-samples-complete-${new Date().toISOString().split('T')[0]}.xlsx`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(url);
+                showToast('✅ Complete Excel file with 3 sheets downloaded!', 'success');
+            } catch (error) {
+                console.error('Excel export error:', error);
+                showToast('❌ Error creating Excel: ' + error.message, 'error');
+            }
+            
+            hideLoading();
+        }
+
+        function exportJSON() {
+            const dataStr = JSON.stringify(samples, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `footwear-samples-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+            showToast('Data exported successfully', 'success');
+        }
+
+        function importJSON() {
+            document.getElementById('importInput').click();
+        }
+
+        function handleImport(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                try {
+                    const importedData = JSON.parse(event.target.result);
+                    if (Array.isArray(importedData)) {
+                        if (confirm(`Import ${importedData.length} samples? This will replace existing data.`)) {
+                            samples = importedData;
+                            saveSamples();
+                            filterSamples();
+                            showToast('Data imported successfully', 'success');
+                        }
+                    } else {
+                        showToast('Invalid data format', 'error');
+                    }
+                } catch (error) {
+                    showToast('Error importing data', 'error');
+                }
+            };
+            reader.readAsText(file);
+            e.target.value = '';
+        }
+
+        // ==================== GITHUB SYNC ====================
+        async function saveToGitHub() {
+            if (!githubToken) {
+                githubToken = prompt('Paste your GitHub Personal Access Token (ghp_...):\n\nIt will only be used in this session.');
+                if (!githubToken) return;
+            }
+            
+            showLoading('Saving to GitHub...');
+            
+            const url = 'https://api.github.com/repos/SIVIFashion/footwear-sample-tracker/contents/live-samples.json';
+            
+            try {
+                const getResp = await fetch(url, {
+                    headers: {'Authorization': `token ${githubToken}`}
+                });
+                
+                if (!getResp.ok) throw new Error('Could not access GitHub. Check token.');
+                
+                const fileData = await getResp.json();
+                
+                const putResp = await fetch(url, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${githubToken}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    },
+                    body: JSON.stringify({
+                        message: `Update samples - ${new Date().toLocaleString()}`,
+                        content: btoa(JSON.stringify(samples, null, 2)),
+                        sha: fileData.sha
+                    })
+                });
+                
+                if (putResp.ok) {
+                    showToast('✅ Saved to GitHub!', 'success');
+                } else {
+                    throw new Error('Failed to save');
+                }
+            } catch (error) {
+                githubToken = null;
+                showToast(`❌ ${error.message}`, 'error');
+            }
+            
+            hideLoading();
+        }
+
+        async function loadFromGitHub() {
+            if (!githubToken) {
+                githubToken = prompt('Paste your GitHub Personal Access Token (ghp_...):\n\nIt will only be used in this session.');
+                if (!githubToken) return;
+            }
+            
+            showLoading('Loading from GitHub...');
+            
+            const url = 'https://api.github.com/repos/SIVIFashion/footwear-sample-tracker/contents/live-samples.json';
+            
+            try {
+                const resp = await fetch(url, {
+                    headers: {'Authorization': `token ${githubToken}`}
+                });
+                
+                if (!resp.ok) throw new Error('Could not load from GitHub. Check token.');
+                
+                const fileData = await resp.json();
+                const decodedContent = JSON.parse(atob(fileData.content));
+                
+                if (confirm(`Load ${decodedContent.length} samples from GitHub? This will replace current data.`)) {
+                    samples = decodedContent;
+                    saveSamples();
+                    filteredSamples = [...samples];
+                    hideLoading();
+                    showToast('✅ Loaded from GitHub successfully!', 'success');
+                    
+                    // Wait 1 second then refresh the view (not reload page)
+                    setTimeout(() => {
+                        renderCurrentView();
+                    }, 1000);
+                } else {
+                    hideLoading();
+                }
+            } catch (error) {
+                githubToken = null;
+                hideLoading();
+                showToast(`❌ ${error.message}`, 'error');
+            }
+        }
+
+        // ==================== UI HELPERS ====================
+        function showLoading(text = 'Processing...') {
+            document.getElementById('loadingText').textContent = text;
+            document.getElementById('loadingIndicator').classList.add('show');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingIndicator').classList.remove('show');
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast show ' + type;
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return 'N/A';
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+        }
+    </script>
 </body>
 </html>
