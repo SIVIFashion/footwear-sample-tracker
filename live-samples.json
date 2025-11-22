@@ -1,7 +1,7 @@
 [
   {
     "id": "FS-034364",
-    "sampleName": "NM - Coconoir",
+    "sampleName": "NM - Coconoir (CFM-3Dec)",
     "client": "Neeman's",
     "dateReceived": "2025-10-15",
     "currentStage": "Development",
@@ -11,7 +11,7 @@
     ],
     "savedBy": "SG",
     "lastEditedBy": "SG",
-    "lastEditedDate": "2025-11-18T08:03:54.365Z",
+    "lastEditedDate": "2025-11-22T04:22:44.113Z",
     "materialDetails": {
       "upperMaterial": {
         "vendor": "Decowel",
@@ -78,12 +78,17 @@
         "user": "SG",
         "date": "2025-11-18T08:03:54.365Z",
         "change": "Sample created"
+      },
+      {
+        "user": "SG",
+        "date": "2025-11-22T04:22:44.113Z",
+        "change": "Sample updated"
       }
     ]
   },
   {
     "id": "FS-562011",
-    "sampleName": "NM - Hexaflow",
+    "sampleName": "NM - Hexaflow (CFM-22 Nov)",
     "client": "Neeman's",
     "dateReceived": "2025-10-28",
     "currentStage": "Development",
@@ -93,7 +98,7 @@
     ],
     "savedBy": "SG",
     "lastEditedBy": "SG",
-    "lastEditedDate": "2025-11-18T08:12:42.012Z",
+    "lastEditedDate": "2025-11-22T04:27:40.231Z",
     "materialDetails": {
       "upperMaterial": {
         "vendor": "Decowel",
@@ -124,7 +129,7 @@
         "name": "",
         "vendor": "",
         "stage": "",
-        "deliveryDate": "",
+        "deliveryDate": "2025-11-21",
         "remarks": ""
       }
     },
@@ -146,12 +151,12 @@
       },
       "assembly": {
         "status": "",
-        "deliveryDate": "",
+        "deliveryDate": "2025-11-22",
         "remarks": ""
       },
       "qualityCheck": {
         "status": "",
-        "deliveryDate": "",
+        "deliveryDate": "2025-11-22",
         "remarks": ""
       }
     },
@@ -160,6 +165,11 @@
         "user": "SG",
         "date": "2025-11-18T08:12:42.012Z",
         "change": "Sample created"
+      },
+      {
+        "user": "SG",
+        "date": "2025-11-22T04:27:40.231Z",
+        "change": "Sample updated"
       }
     ]
   },
@@ -599,7 +609,7 @@
   },
   {
     "id": "FS-429663",
-    "sampleName": "NM-Airnest",
+    "sampleName": "NM-Airnest (CFM-29 Nov)",
     "client": "Neeman's",
     "dateReceived": "2025-10-02",
     "currentStage": "Development",
@@ -609,65 +619,65 @@
     ],
     "savedBy": "SG",
     "lastEditedBy": "SG",
-    "lastEditedDate": "2025-11-22T04:10:12.083Z",
+    "lastEditedDate": "2025-11-22T04:26:53.817Z",
     "materialDetails": {
       "upperMaterial": {
-        "vendor": "",
-        "stage": "",
-        "deliveryDate": "",
-        "remarks": ""
+        "vendor": "Decowel",
+        "stage": "Ordered",
+        "deliveryDate": "2025-11-25",
+        "remarks": "14 Nov - Knitting pattern sent"
       },
       "last": {
-        "vendor": "",
-        "stage": "",
-        "deliveryDate": "",
+        "vendor": "NM-RUN",
+        "stage": "Delivered",
+        "deliveryDate": "2025-11-21",
         "remarks": ""
       },
       "sole": {
-        "vendor": "",
-        "stage": "",
-        "deliveryDate": "",
+        "vendor": "Alert - Sonet",
+        "stage": "Ordered",
+        "deliveryDate": "2025-11-23",
         "remarks": ""
       },
       "other1": {
         "name": "",
         "vendor": "",
         "stage": "",
-        "deliveryDate": "",
+        "deliveryDate": "2025-11-22",
         "remarks": ""
       },
       "other2": {
         "name": "",
         "vendor": "",
         "stage": "",
-        "deliveryDate": "",
+        "deliveryDate": "2025-11-22",
         "remarks": ""
       }
     },
     "developmentStages": {
       "patternTrial": {
-        "status": "",
-        "deliveryDate": "",
+        "status": "In Progress",
+        "deliveryDate": "2025-11-25",
         "remarks": ""
       },
       "upperReady": {
         "status": "",
-        "deliveryDate": "",
+        "deliveryDate": "2025-11-26",
         "remarks": ""
       },
       "soleReady": {
-        "status": "",
-        "deliveryDate": "",
+        "status": "In Progress",
+        "deliveryDate": "2025-11-26",
         "remarks": ""
       },
       "assembly": {
         "status": "",
-        "deliveryDate": "",
+        "deliveryDate": "2025-11-26",
         "remarks": ""
       },
       "qualityCheck": {
         "status": "",
-        "deliveryDate": "",
+        "deliveryDate": "2025-11-26",
         "remarks": ""
       }
     },
@@ -676,12 +686,17 @@
         "user": "SG",
         "date": "2025-11-22T04:07:09.663Z",
         "change": "Sample created"
+      },
+      {
+        "user": "SG",
+        "date": "2025-11-22T04:26:53.817Z",
+        "change": "Sample updated"
       }
     ]
   },
   {
     "id": "FS-472914",
-    "sampleName": "NM-Hexa Flow",
+    "sampleName": "NM-Hexa Walk (CFM-24 Nov)",
     "client": "Neeman's",
     "dateReceived": "2025-10-03",
     "currentStage": "Development",
@@ -691,65 +706,65 @@
     ],
     "savedBy": "SG",
     "lastEditedBy": "SG",
-    "lastEditedDate": "2025-11-22T04:10:13.837Z",
+    "lastEditedDate": "2025-11-22T04:25:02.267Z",
     "materialDetails": {
       "upperMaterial": {
-        "vendor": "",
-        "stage": "",
-        "deliveryDate": "",
-        "remarks": ""
+        "vendor": "Decowel",
+        "stage": "Ordered",
+        "deliveryDate": "2025-11-24",
+        "remarks": "8 Nov - Knitting sent to decowel after correction"
       },
       "last": {
-        "vendor": "",
-        "stage": "",
-        "deliveryDate": "",
+        "vendor": "NM-RUN",
+        "stage": "Delivered",
+        "deliveryDate": "2025-11-22",
         "remarks": ""
       },
       "sole": {
-        "vendor": "",
-        "stage": "",
-        "deliveryDate": "",
+        "vendor": "Pebble",
+        "stage": "Delivered",
+        "deliveryDate": "2025-11-22",
         "remarks": ""
       },
       "other1": {
         "name": "",
         "vendor": "",
         "stage": "",
-        "deliveryDate": "",
+        "deliveryDate": "2025-11-22",
         "remarks": ""
       },
       "other2": {
         "name": "",
         "vendor": "",
         "stage": "",
-        "deliveryDate": "",
+        "deliveryDate": "2025-11-22",
         "remarks": ""
       }
     },
     "developmentStages": {
       "patternTrial": {
-        "status": "",
-        "deliveryDate": "",
+        "status": "Completed",
+        "deliveryDate": "2025-11-22",
         "remarks": ""
       },
       "upperReady": {
         "status": "",
-        "deliveryDate": "",
+        "deliveryDate": "2025-11-24",
         "remarks": ""
       },
       "soleReady": {
-        "status": "",
-        "deliveryDate": "",
+        "status": "Completed",
+        "deliveryDate": "2025-11-21",
         "remarks": ""
       },
       "assembly": {
         "status": "",
-        "deliveryDate": "",
+        "deliveryDate": "2025-11-25",
         "remarks": ""
       },
       "qualityCheck": {
         "status": "",
-        "deliveryDate": "",
+        "deliveryDate": "2025-11-25",
         "remarks": ""
       }
     },
@@ -758,6 +773,16 @@
         "user": "SG",
         "date": "2025-11-22T04:07:52.914Z",
         "change": "Sample created"
+      },
+      {
+        "user": "SG",
+        "date": "2025-11-22T04:22:08.611Z",
+        "change": "Sample updated"
+      },
+      {
+        "user": "SG",
+        "date": "2025-11-22T04:25:02.267Z",
+        "change": "Sample updated"
       }
     ]
   },
